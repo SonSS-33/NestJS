@@ -3,16 +3,15 @@ import { createPostDto, updatePostDto } from '../Dto/post.dto';
 
 @Injectable()
 export class PostService {
-    private lastPostId = 0;
-  private posts = []; // trả về 
+  private lastPostId = 0;
+  private posts = []; // trả về
 
   getAllpost() {
     return this.posts;
   }
 
   getPost(id: number) {
-    return this.posts.find(post => post.id === id);
-    
+    return this.posts.find((post) => post.id === id);
   }
 
   createPost(createPostDto: createPostDto) {
@@ -25,7 +24,7 @@ export class PostService {
   }
 
   replacePost(id: number, updatePostDto: updatePostDto) {
-    const index = this.posts.findIndex(post => post.id === id);
+    const index = this.posts.findIndex((post) => post.id === id);
     if (index === -1) {
       return null; // hoặc throw an exception
     }
@@ -33,8 +32,8 @@ export class PostService {
     return this.posts[index];
   }
 
-   async deletePost(id: number) {
-     const index = this.posts.findIndex(post => post.id === id);
+  async deletePost(id: number) {
+    const index = this.posts.findIndex((post) => post.id === id);
     if (index === -1) {
       return false; // hoặc throw an exception
     }

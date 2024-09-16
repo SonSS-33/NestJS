@@ -4,9 +4,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostModule } from './post/post.module';
 import { UsersModule } from './users/users.module';
-import { User } from './users/users.entity';
+import { UserEntity } from './users/entities/users.entity';
 import { AuthModule } from './authentication/auth.module';
-
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './authentication/middlewares/auth.guard';
 
 @Module({
   imports: [
@@ -17,14 +18,20 @@ import { AuthModule } from './authentication/auth.module';
       username: 'root',
       password: 'songlong',
       database: 'intern',
-      entities: [User],
+      entities: [UserEntity],
       synchronize: true,
     }),
     PostModule,
-    UsersModule, 
-   AuthModule
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService,],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
