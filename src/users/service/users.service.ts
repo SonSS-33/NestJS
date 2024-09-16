@@ -9,6 +9,11 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
+  async create(createUserDto: Partial<User>): Promise<User> {
+    const newUser = this.usersRepository.create(createUserDto);
+    return this.usersRepository.save(newUser);
+  }
+  
 
   async findAll(name?: string, page: number = 1, limit: number = 10): Promise<User[]> {
     const queryBuilder = this.usersRepository.createQueryBuilder('user');
@@ -18,7 +23,7 @@ export class UsersService {
       queryBuilder.andWhere('user.username LIKE :name', { name: `%${name}%` });
     }
 
-    // Áp dụng phân trang
+    //  phân trang
     queryBuilder.skip((page - 1) * limit);
     queryBuilder.take(limit);
 
@@ -28,6 +33,7 @@ export class UsersService {
   async findOne(username: string): Promise<User | undefined> {
     return this.usersRepository.findOneBy({ username });
   }
+
   async update(id: number, updateUserDto: Partial<User>): Promise<User> {
     const user = await this.usersRepository.preload({
       id,
@@ -48,5 +54,5 @@ export class UsersService {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
   }
+  
 }
-
