@@ -17,7 +17,7 @@ export class PostService {
 
   createPost(createPostDto: createPostDto) {
     const newPost = {
-      id: this.posts.length + 1, // Tạo ID đơn giản, bạn có thể thay thế bằng cách khác
+      id: this.posts.length + 1,
       ...createPostDto,
     };
     this.posts.push(newPost);
@@ -27,7 +27,7 @@ export class PostService {
   replacePost(id: number, updatePostDto: updatePostDto) {
     const index = this.posts.findIndex(post => post.id === id);
     if (index === -1) {
-      return null; // hoặc throw an exception
+      return null; 
     }
     this.posts[index] = { id, ...updatePostDto };
     return this.posts[index];
@@ -36,7 +36,7 @@ export class PostService {
    async deletePost(id: number) {
      const index = this.posts.findIndex(post => post.id === id);
     if (index === -1) {
-      return false; // hoặc throw an exception
+      return false; 
     }
     this.posts.splice(index, 1);
     return true;

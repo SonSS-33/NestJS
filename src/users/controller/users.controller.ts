@@ -1,43 +1,40 @@
-import { Body, Controller, Delete, Get, Param, Query, Put, ParseIntPipe,Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Put, Post } from '@nestjs/common';
 import { UsersService } from '../service/users.service';
-import { User } from '../users.entity';
-import { CreateUserDto } from '../dto/create-user.dto';
+import { 
+  CreateUserDto,
+  DeleteUserParamsDto, 
+  GetUserParamsDto, 
+  UpdateUserBodyDto, 
+  UpdateUserParamsDto } from '../dto/user.dto';
 
 
 
-@Controller('users')
+@Controller('api/v1/user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
-  async findAll(
-    @Query('name') name?: string,
-    @Query('page', ParseIntPipe) page: number = 1,
-    @Query('limit', ParseIntPipe) limit: number = 10
-  ): Promise<User[]> {
-    return this.usersService.findAll(name, page, limit);
+  @Get(':userId/detail')
+  async getUser(@Param() params: GetUserParamsDto) {
+    return await this.usersService.getUser(params.userId);
   }
-
-  @Get(':username')
-  async findOne(@Param('username') username: string): Promise<User | undefined> {
-    return this.usersService.findOne(username);
+  @Post('create')
+  async createUser(
+    @Body() body: CreateUserDto,
+  ) {
+    return await this.usersService.createUser(body);
   }
-
-  @Put(':id')
+  @Put(':userId/update')
   async update(
-    @Param('id') id: number,
-    @Body() updateUserDto: Partial<User>
-  ): Promise<User> {
-    return this.usersService.update(id, updateUserDto);
+    @Param() params: UpdateUserParamsDto,
+    @Body() body: UpdateUserBodyDto,
+  ) {
+    const user = await this.usersService.getUser(params.userId);
+    return await this.usersService.updateUser(user, body.email, body.password);
   }
 
-  @Delete(':id')
-  async remove(@Param('id') id: number): Promise<void> {
-    return this.usersService.remove(id);
+  @Delete(':userId/delete')
+  async deleteUser(@Param() params: DeleteUserParamsDto) {
+    const user = await this.usersService.getUser(params.userId);
+    return await this.usersService.deleteUser(user);
   }
-  @Post()
-async create(@Body() createUserDto: CreateUserDto): Promise<User> {
-  return this.usersService.create(createUserDto);
-}
-
 }

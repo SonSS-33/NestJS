@@ -1,4 +1,12 @@
-import { IsString, IsNotEmpty, IsEmail, MinLength, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNotEmpty,
+  IsEmail,
+  MinLength,
+  IsOptional,
+  IsNumber,
+} from 'class-validator';
 
 export class CreateUserDto {
   @IsString()
@@ -15,17 +23,44 @@ export class CreateUserDto {
   readonly password: string;
 }
 
-export class UpdateUserDto {
+export class GetUserParamsDto {
+  @Type(() => Number)
+  @IsNumber()
+  userId: number;
+}
+
+export class UpdateUserParamsDto {
+  @Type(() => Number)
+  @IsNumber()
+  userId: number;
+}
+
+export class DeleteUserParamsDto {
+  @Type(() => Number)
+  @IsNumber()
+  userId: number;
+}
+
+export class UpdateUserBodyDto {
   @IsString()
   @IsOptional()
-  readonly username?: string;
+  username?: string;
 
-  @IsEmail()
   @IsOptional()
-  readonly email?: string;
+  @IsEmail()
+  email?: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(6)
-  @IsOptional()
-  readonly password?: string;
+   readonly password?: string;
+}
+export class LoginDto {
+  @IsString()
+  @IsNotEmpty()
+  readonly username: string;
+
+  @IsString()
+  @IsNotEmpty()
+  readonly password: string;
 }

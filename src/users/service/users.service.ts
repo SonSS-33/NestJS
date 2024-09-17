@@ -1,26 +1,40 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../users.entity'; 
+import { UserEntity } from '../entities/users.entity'; 
+import { CreateUserDto } from '../dto/user.dto';
+
+
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
+    @InjectRepository(UserEntity)
+    private readonly usersRepository: Repository<UserEntity>,
   ) {}
-  async create(createUserDto: Partial<User>): Promise<User> {
-    const newUser = this.usersRepository.create(createUserDto);
-    return this.usersRepository.save(newUser);
-  }
   
 
-  async findAll(name?: string, page: number = 1, limit: number = 10): Promise<User[]> {
+   // Phương thức tạo người dùng mới
+   async createUser(createUserDto: CreateUserDto): Promise<UserEntity> {
+    // Tạo một đối tượng UserEntity mới từ DTO
+    const newUser = this.usersRepository.create(createUserDto);
+
+    // Lưu đối tượng người dùng vào cơ sở dữ liệu
+  
+      return await this.usersRepository.save(newUser);
+    
+  }
+  
+  async findAll(
+    q: string | undefined, 
+    page: number = 1, 
+    limit: number = 10)
+    : Promise<UserEntity[]> {
     const queryBuilder = this.usersRepository.createQueryBuilder('user');
     
-    // Áp dụng tìm kiếm theo tên
-    if (name) {
-      queryBuilder.andWhere('user.username LIKE :name', { name: `%${name}%` });
+    // Áp dụng tìm kiếm theo tên  
+    if (q) {
+      queryBuilder.andWhere('user.username LIKE :q', { q: `%${q}%` });
     }
 
     //  phân trang
@@ -30,29 +44,50 @@ export class UsersService {
     return queryBuilder.getMany();
   }
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.usersRepository.findOneBy({ username });
+async getUser(userId: number):Promise<UserEntity>{
+  const user = await this.usersRepository.findOne({
+    where:  {
+      id: userId,
+    },
+  })
+  if(!user){
+    throw new HttpException(`user not found`, HttpStatus.NOT_FOUND);
   }
+  return user;
+}
 
-  async update(id: number, updateUserDto: Partial<User>): Promise<User> {
-    const user = await this.usersRepository.preload({
-      id,
-      ...updateUserDto,
-    });
+async getUserByUsername(username: string):Promise<UserEntity>{
+  const user = await this.usersRepository.findOne({
+    where:{
+      username: username,
+    },
+  })
+  if(!user){
+    throw new HttpException(`user not found `, HttpStatus.NOT_FOUND)
+    
+  }
+  return user;
+}
 
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+  async updateUser(
+    user:UserEntity,
+    email:string|undefined,
+    password:string|undefined,
+  ){
+    await this.usersRepository.update(
+    {
+      id: user.id,
+    },
+    {
+      email: email,
+    password:password,
     }
-
-    return this.usersRepository.save(user);
+);
+return await this.getUser(user.id);
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.usersRepository.delete(id);
-
-    if (result.affected === 0) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
-  }
-  
+async deleteUser(user:UserEntity):Promise<boolean>{
+  await this.usersRepository.delete(user.id);
+    return true;
+}
 }
