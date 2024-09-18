@@ -16,15 +16,15 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
   async findAll(
-    q: string | undefined,
+    name: string | undefined,
     page: number = 1,
     limit: number = 10,
   ): Promise<UserEntity[]> {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
 
     // Áp dụng tìm kiếm theo tên
-    if (q) {
-      queryBuilder.where('user.username LIKE :name', { name: `%${q}%` });
+    if (name) {
+      queryBuilder.where('user.username LIKE :name', { name: `%${name}%` });
     }
 
     // Áp dụng phân trang
@@ -33,6 +33,7 @@ export class UsersService {
 
     return queryBuilder.getMany();
   }
+
 
   async getUser(userId: number): Promise<UserEntity> {
     const user = await this.userRepository.findOne({

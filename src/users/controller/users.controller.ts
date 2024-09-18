@@ -8,8 +8,6 @@ import {
   UpdateUserParamsDto,
 } from '../dto/user.dto';
 import { Public } from 'src/authentication/decorators/public.decorator';
-import { UserEntity } from '../entities/users.entity';
-import { Repository } from 'typeorm';
 @Controller('api/v1/user')
 export class UsersController {
   constructor(private readonly usersService: UsersService
@@ -40,4 +38,13 @@ export class UsersController {
     const user = await this.usersService.getUser(params.userId);
     return await this.usersService.deleteUser(user);
   }
+  @Get('all')
+async findAll(
+  @Query('name') name?: string,
+  @Query('page') page: number = 1,
+  @Query('limit') limit: number = 10
+) {
+  return this.usersService.findAll(name, page, limit);
+}
+
 }
