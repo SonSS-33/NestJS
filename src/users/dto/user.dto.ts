@@ -53,14 +53,14 @@ export class UpdateUserBodyDto {
   @IsOptional()
   @IsString()
   @MinLength(6)
-   readonly password?: string;
+  readonly password?: string;
 }
 export class LoginDto {
   @IsString()
   @IsNotEmpty()
-   username: string;
+  username: string;
 
   @IsString()
   @IsNotEmpty()
-   password: string;
+  password: string;
 }

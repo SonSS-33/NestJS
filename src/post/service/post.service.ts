@@ -26,7 +26,7 @@ export class PostService {
   replacePost(id: number, updatePostDto: updatePostDto) {
     const index = this.posts.findIndex((post) => post.id === id);
     if (index === -1) {
-      return null; 
+      return null;
     }
     this.posts[index] = { id, ...updatePostDto };
     return this.posts[index];
@@ -35,7 +35,7 @@ export class PostService {
   async deletePost(id: number) {
     const index = this.posts.findIndex((post) => post.id === id);
     if (index === -1) {
-      return false; 
+      return false;
     }
     this.posts.splice(index, 1);
     return true;

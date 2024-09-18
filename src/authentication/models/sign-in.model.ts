@@ -1,7 +1,7 @@
-export class SignInModel{
-public readonly accessToken: string;
+export class SignInModel {
+  public readonly accessToken: string;
 
-constructor(accessToken: string){
+  constructor(accessToken: string) {
     this.accessToken = accessToken;
-}
+  }
 }

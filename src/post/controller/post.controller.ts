@@ -2,14 +2,11 @@ import {
   Body,
   Controller,
   Delete,
-  Dependencies,
   Get,
   Param,
   Post,
   Put,
-  RequestTimeoutException,
 } from '@nestjs/common';
-import { get } from 'http';
 import { createPostDto, updatePostDto } from '../Dto/post.dto';
 import { PostService } from '../service/post.service';
 
