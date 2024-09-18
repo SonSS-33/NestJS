@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { UserEntity } from './users/entities/users.entity';
 import { AuthModule } from './authentication/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './authentication/middlewares/auth.guard';
