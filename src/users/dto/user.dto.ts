@@ -8,19 +8,19 @@ import {
   IsNumber,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateUserBodyDto {
   @IsString()
   @IsNotEmpty()
-  readonly username: string;
+  username: string;
 
   @IsEmail()
   @IsNotEmpty()
-  readonly email: string;
+  email: string;
 
   @IsString()
   @MinLength(6)
   @IsNotEmpty()
-  readonly password: string;
+  password: string;
 }
 
 export class GetUserParamsDto {

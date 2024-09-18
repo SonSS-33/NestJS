@@ -7,9 +7,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../entities/users.entity';
-import { CreateUserDto } from '../dto/user.dto';
+import { UserEntity } from './entities/users.entity';
 import { AuthService } from 'src/authentication/auth.service';
+import { hash } from 'bcryptjs';
 
 @Injectable()
 export class UsersService {
@@ -20,15 +20,12 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
-  async createUser(createUserDto: CreateUserDto) {
-    const hashedPassword = await this.authService.hashPassword(
-      createUserDto.password,
-    );
-    const user = this.userRepository.create({
-      ...createUserDto,
-      password: hashedPassword,
-    });
-    return this.userRepository.save(user);
+  async createUser(email: string, username: string, password: string) {
+    const user = new UserEntity();
+    user.email = email;
+    user.username = username;
+    user.password = await hash(password, 10);
+    return await this.userRepository.save(user);
   }
 
   async findAll(
@@ -78,7 +75,9 @@ export class UsersService {
     email: string | undefined,
     password: string | undefined,
   ) {
-    const updateData: Partial<UserEntity> = { email };
+    const updateData: Partial<UserEntity> = {
+      email: email,
+    };
 
     if (password) {
       updateData.password = await this.authService.hashPassword(password);

@@ -8,14 +8,14 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { UsersService } from '../service/users.service';
+import { UsersService } from './users.service';
 import {
-  CreateUserDto,
+  CreateUserBodyDto,
   DeleteUserParamsDto,
   GetUserParamsDto,
   UpdateUserBodyDto,
   UpdateUserParamsDto,
-} from '../dto/user.dto';
+} from './dto/user.dto';
 import { Public } from 'src/authentication/decorators/public.decorator';
 @Controller('api/v1/user')
 export class UsersController {
@@ -23,8 +23,12 @@ export class UsersController {
 
   @Public()
   @Post('create')
-  async createUser(@Body() body: CreateUserDto) {
-    return await this.usersService.createUser(body);
+  async createUser(@Body() body: CreateUserBodyDto) {
+    return await this.usersService.createUser(
+      body.email,
+      body.username,
+      body.password,
+    );
   }
   @Get(':userId/detail')
   async getUser(@Param() params: GetUserParamsDto) {
@@ -45,12 +49,9 @@ export class UsersController {
     const user = await this.usersService.getUser(params.userId);
     return await this.usersService.deleteUser(user);
   }
+
   @Get('all')
-  async findAll(
-    @Query('name') name?: string,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
-  ) {
-    return this.usersService.findAll(name, page, limit);
+  async findAll(@Query() query: any) {
+    return await this.usersService.findAll(query.name, query.page, query.limit);
   }
 }
