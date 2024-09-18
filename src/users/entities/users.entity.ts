@@ -1,17 +1,17 @@
-  // src/user/user.entity.ts
-import { Entity,PrimaryGeneratedColumn,Column } from "typeorm";
+// src/user/user.entity.ts
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-  @Entity()
-  export class UserEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
-    
-    @Column()
-    username: string;
+@Entity()
+export class UserEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    email: string;
+  @Column()
+  username: string;
 
-    @Column()
-    password: string;
-  }
+  @Column()
+  email: string;
+
+  @Column()
+  password: string;
+}

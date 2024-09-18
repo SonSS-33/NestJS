@@ -7,12 +7,13 @@ import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    UsersModule,
+    
     JwtModule.register({
-      // global:true,
+      
       secret: jwtConstants.secret,
       signOptions: { expiresIn: '30d' },
     }),
+    UsersModule,
   ],
   providers: [AuthService],
   controllers: [AuthController],

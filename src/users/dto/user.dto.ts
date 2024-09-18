@@ -58,9 +58,9 @@ export class UpdateUserBodyDto {
 export class LoginDto {
   @IsString()
   @IsNotEmpty()
-  readonly username: string;
+   username: string;
 
   @IsString()
   @IsNotEmpty()
-  readonly password: string;
+   password: string;
 }

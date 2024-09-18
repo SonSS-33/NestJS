@@ -11,4 +11,3 @@ export class Post {
   @Column()
   content: string;
 }
-
