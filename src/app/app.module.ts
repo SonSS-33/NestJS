@@ -6,20 +6,24 @@ import { UsersModule } from '../users/users.module';
 import { AuthModule } from '../authentication/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from '../authentication/middlewares/auth.guard';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: 'songlong',
-      database: 'intern',
-      autoLoadEntities: true,
-      synchronize: true,
+    ConfigModule.forRoot({}),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'mysql',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+        autoLoadEntities: true,
+      }),
+      inject: [ConfigService],
     }),
-
     UsersModule,
     AuthModule,
   ],
