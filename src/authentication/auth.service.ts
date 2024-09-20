@@ -8,6 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { SignInModel } from './models/sign-in.model';
 import * as bcrypt from 'bcryptjs';
 import { UsersService } from 'src/users/users.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +16,7 @@ export class AuthService {
     @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
   private readonly saltRounds = 10;
@@ -41,7 +43,9 @@ export class AuthService {
       username: user.username,
     };
 
-    const accessToken = await this.jwtService.signAsync(payload);
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: this.configService.get<string>('JWT_SECRET'),
+    });
 
     return new SignInModel(accessToken);
   }
