@@ -7,12 +7,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { UserEntity } from './entities/users.entity';
-import { AuthService } from 'src/authentication/auth.service';
+import { UserEntity } from './entities/user.entity';
+import { AuthService } from 'src/auth/auth.service';
 import { hash } from 'bcryptjs';
+import { PublicRoleType } from './enums/public-role.type';
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -24,7 +25,7 @@ export class UsersService {
     email: string,
     username: string,
     password: string,
-    role: string,
+    role: PublicRoleType,
   ) {
     const user = new UserEntity();
     user.email = email;
@@ -80,7 +81,7 @@ export class UsersService {
     user: UserEntity,
     email: string | undefined,
     password: string | undefined,
-    role: string,
+    role: PublicRoleType,
   ) {
     const updateData: Partial<UserEntity> = {
       email: email,
@@ -92,7 +93,6 @@ export class UsersService {
     }
 
     await this.userRepository.update(user.id, updateData);
-
     return await this.getUser(user.id);
   }
 

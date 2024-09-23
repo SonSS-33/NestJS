@@ -1,31 +1,27 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from '../users/users.module';
-import { AuthModule } from '../authentication/auth.module';
+import { UserModule } from '../user/user.module';
+import { AuthModule } from '../auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AuthGuard } from '../authentication/middlewares/auth.guard';
+import { AuthGuard } from '../auth/middlewares/auth.guard';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import database from 'src/config/database';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({}),
+    ConfigModule.forRoot({
+      load: [database],
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: 'mysql',
-        host: configService.get<string>('DB_HOST'),
-        port: configService.get<number>('DB_PORT'),
-        username: configService.get<string>('DB_USERNAME'),
-        password: configService.get<string>('DB_PASSWORD'),
-        database: configService.get<string>('DB_DATABASE'),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
       inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        return configService.get('database') as TypeOrmModuleOptions;
+      },
     }),
-    UsersModule,
+    UserModule,
     AuthModule,
   ],
   controllers: [AppController],

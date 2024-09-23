@@ -6,7 +6,9 @@ import {
   MinLength,
   IsOptional,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
+import { PublicRoleType } from '../enums/public-role.type';
 
 export class CreateUserBodyDto {
   @IsString()
@@ -22,7 +24,8 @@ export class CreateUserBodyDto {
   @IsNotEmpty()
   password: string;
 
-  role: string;
+  @IsEnum(PublicRoleType)
+  role: PublicRoleType;
 }
 
 export class GetUserParamsDto {
@@ -57,7 +60,8 @@ export class UpdateUserBodyDto {
   @MinLength(6)
   password?: string;
 
-  role: string;
+  @IsEnum(PublicRoleType)
+  role: PublicRoleType;
 }
 export class LoginDto {
   @IsString()

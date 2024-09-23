@@ -7,14 +7,14 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { SignInModel } from './models/sign-in.model';
 import * as bcrypt from 'bcryptjs';
-import { UsersService } from 'src/users/users.service';
 import { ConfigService } from '@nestjs/config';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject(forwardRef(() => UsersService))
-    private readonly usersService: UsersService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {}
@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   async signIn(username: string, password: string): Promise<SignInModel> {
-    const user = await this.usersService.getUserByUsername(username);
+    const user = await this.userService.getUserByUsername(username);
     const checkPassword = await this.comparePassword(password, user.password);
     if (!checkPassword) {
       throw new UnauthorizedException('Invalid credentials');
@@ -43,9 +43,7 @@ export class AuthService {
       username: user.username,
     };
 
-    const accessToken = await this.jwtService.signAsync(payload, {
-      secret: this.configService.get<string>('JWT_SECRET'),
-    });
+    const accessToken = await this.jwtService.signAsync(payload);
 
     return new SignInModel(accessToken);
   }

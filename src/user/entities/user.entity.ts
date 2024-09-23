@@ -1,7 +1,8 @@
 // src/user/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { PublicRoleType } from '../enums/public-role.type';
 
-@Entity()
+@Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -15,6 +16,6 @@ export class UserEntity {
   @Column()
   password: string;
 
-  @Column({ default: 'user' })
-  role: string;
+  @Column()
+  role: PublicRoleType;
 }

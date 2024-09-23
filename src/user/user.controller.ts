@@ -7,9 +7,8 @@ import {
   Put,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 import {
   CreateUserBodyDto,
   DeleteUserParamsDto,
@@ -17,18 +16,18 @@ import {
   UpdateUserBodyDto,
   UpdateUserParamsDto,
 } from './dto/user.dto';
-
 import { Roles } from 'src/guards/roles.decorator';
-import { Public } from 'src/authentication/decorators/public.decorator';
-import { AuthGuard } from 'src/authentication/middlewares/auth.guard';
+import { Public } from 'src/auth/decorators/public.decorator';
+import { RoleType } from './enums/role.type';
+
 @Controller('api/v1/user')
-export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+export class UserController {
+  constructor(private readonly userService: UserService) {}
 
   @Public()
   @Post('create')
   async createUser(@Body() body: CreateUserBodyDto) {
-    return await this.usersService.createUser(
+    return await this.userService.createUser(
       body.email,
       body.username,
       body.password,
@@ -38,18 +37,17 @@ export class UsersController {
 
   @Get(':userId/detail')
   async getUser(@Param() params: GetUserParamsDto) {
-    return await this.usersService.getUser(params.userId);
+    return await this.userService.getUser(params.userId);
   }
 
-  @UseGuards(AuthGuard)
-  @Roles('admin')
+  @Roles(RoleType.ADMIN)
   @Put(':userId/update')
   async update(
     @Param() params: UpdateUserParamsDto,
     @Body() body: UpdateUserBodyDto,
   ) {
-    const user = await this.usersService.getUser(params.userId);
-    return await this.usersService.updateUser(
+    const user = await this.userService.getUser(params.userId);
+    return await this.userService.updateUser(
       user,
       body.email,
       body.password,
@@ -57,16 +55,15 @@ export class UsersController {
     );
   }
 
-  @UseGuards(AuthGuard)
-  @Roles('admin')
+  @Roles(RoleType.ADMIN)
   @Delete(':userId/delete')
   async deleteUser(@Param() params: DeleteUserParamsDto) {
-    const user = await this.usersService.getUser(params.userId);
-    return await this.usersService.deleteUser(user);
+    const user = await this.userService.getUser(params.userId);
+    return await this.userService.deleteUser(user);
   }
 
   @Get('all')
   async findAll(@Query() query: any) {
-    return await this.usersService.findAll(query.name, query.page, query.limit);
+    return await this.userService.findAll(query.name, query.page, query.limit);
   }
 }
