@@ -20,11 +20,17 @@ export class UsersService {
     private readonly authService: AuthService,
   ) {}
 
-  async createUser(email: string, username: string, password: string) {
+  async createUser(
+    email: string,
+    username: string,
+    password: string,
+    role: string,
+  ) {
     const user = new UserEntity();
     user.email = email;
     user.username = username;
     user.password = await hash(password, 10);
+    user.role = role;
     return await this.userRepository.save(user);
   }
 
@@ -74,9 +80,11 @@ export class UsersService {
     user: UserEntity,
     email: string | undefined,
     password: string | undefined,
+    role: string,
   ) {
     const updateData: Partial<UserEntity> = {
       email: email,
+      role: role,
     };
 
     if (password) {

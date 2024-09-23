@@ -21,6 +21,8 @@ export class CreateUserBodyDto {
   @MinLength(6)
   @IsNotEmpty()
   password: string;
+
+  role: string;
 }
 
 export class GetUserParamsDto {
@@ -53,7 +55,9 @@ export class UpdateUserBodyDto {
   @IsOptional()
   @IsString()
   @MinLength(6)
-  readonly password?: string;
+  password?: string;
+
+  role: string;
 }
 export class LoginDto {
   @IsString()
