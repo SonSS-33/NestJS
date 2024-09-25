@@ -60,8 +60,9 @@ export class UpdateUserBodyDto {
   @MinLength(6)
   password?: string;
 
-  @IsEnum(RoleType)
-  role: RoleType;
+  @IsOptional()
+  @IsEnum(PublicRoleType)
+  role: PublicRoleType;
 }
 export class LoginDto {
   @IsString()

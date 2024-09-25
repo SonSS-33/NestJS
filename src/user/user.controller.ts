@@ -23,6 +23,7 @@ import { Public } from 'src/auth/decorators/public.decorator';
 import { RoleType } from './enums/role.type';
 import { AuthGuard } from 'src/auth/middlewares/auth.guard';
 import { RolesGuard } from 'src/guards/roles.guard';
+import { PublicRoleType } from './enums/public-role.type';
 
 @Controller('api/v1/user')
 export class UserController {
@@ -52,12 +53,15 @@ export class UserController {
     @Body() body: UpdateUserBodyDto,
     @Req() req: any,
   ) {
+    const currentUser = req.user;
+    const role: PublicRoleType =
+      currentUser.role === RoleType.ADMIN ? body.role : undefined;
     return await this.userService.updateUser(
       params.userId,
       body.username,
       body.email,
       body.password,
-      body.role,
+      role,
       req.user,
     );
   }

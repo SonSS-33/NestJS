@@ -67,7 +67,7 @@ export class UserService {
     username: string,
     email: string | undefined,
     password: string | undefined,
-    role: RoleType,
+    role: PublicRoleType | undefined,
     currentUser: any,
   ) {
     const user = await this.getUser(userId);
@@ -76,17 +76,22 @@ export class UserService {
         'You do not have permission to update this user',
       );
     }
-    if (currentUser.role !== RoleType.ADMIN && role === RoleType.ADMIN) {
+    const updateData: Partial<UserEntity> = { email, username };
+    if (currentUser.role === RoleType.ADMIN && role) {
+      updateData.role = role;
+    }
+    if (currentUser.role !== RoleType.ADMIN && role) {
       throw new ForbiddenException(
-        'You do not have permission to changger this user',
+        'You do not have permission to change the user role',
       );
     }
-    const updateData: Partial<UserEntity> = { email, username };
     if (password) {
       updateData.password = await hash(password, 10);
     }
     await this.userRepository.update(user.id, updateData);
-    return await this.getUser(user.id);
+    const updatedUser = await this.getUser(user.id);
+    delete updatedUser.password;
+    return updatedUser;
   }
 
   async deleteUser(user: UserEntity): Promise<{ message: string }> {
