@@ -10,7 +10,8 @@ import {
 } from 'class-validator';
 import { RoleType } from '../enums/role.type';
 import { PublicRoleType } from '../enums/public-role.type';
-export class CreateUserBodyDto {
+export class RegisterUserBodyDto {
+  // TO DO
   @IsString()
   @IsNotEmpty()
   username: string;
@@ -24,8 +25,8 @@ export class CreateUserBodyDto {
   @IsNotEmpty()
   password: string;
 
-  @IsEnum(RoleType)
-  role: PublicRoleType;
+  @IsEnum(PublicRoleType)
+  role: RoleType;
 }
 
 export class GetUserParamsDto {
@@ -34,7 +35,7 @@ export class GetUserParamsDto {
   userId: number;
 }
 
-export class UpdateUserParamsDto {
+export class UpdateByAdminParamsDto {
   @Type(() => Number)
   @IsNumber()
   userId: number;
@@ -46,7 +47,28 @@ export class DeleteUserParamsDto {
   userId: number;
 }
 
+export class UpdateByAdminBodyDto {
+  // TO DO
+  @IsString()
+  @IsOptional()
+  username?: string;
+
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @IsOptional()
+  @IsString()
+  @MinLength(6)
+  password?: string;
+
+  @IsOptional()
+  @IsEnum(RoleType)
+  role: RoleType;
+}
+
 export class UpdateUserBodyDto {
+  // TO DO
   @IsString()
   @IsOptional()
   username?: string;
@@ -62,14 +84,5 @@ export class UpdateUserBodyDto {
 
   @IsOptional()
   @IsEnum(PublicRoleType)
-  role: PublicRoleType;
-}
-export class LoginDto {
-  @IsString()
-  @IsNotEmpty()
-  username: string;
-
-  @IsString()
-  @IsNotEmpty()
-  password: string;
+  role: RoleType;
 }

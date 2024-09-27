@@ -1,9 +1,9 @@
 // src/user/user.entity.ts
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { PublicRoleType } from '../enums/public-role.type';
 import { Exclude } from 'class-transformer';
+import { RoleType } from '../enums/role.type';
 
-@Entity('user_entity')
+@Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -19,5 +19,8 @@ export class UserEntity {
   password: string;
 
   @Column()
-  role: PublicRoleType;
+  role: RoleType;
+
+  @Column({ name: 'deleted_at' })
+  deletedAt: Date;
 }
