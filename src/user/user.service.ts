@@ -90,6 +90,7 @@ export class UserService {
     }
     await this.userRepository.update(user.id, updateData);
     const updatedUser = await this.getUser(user.id);
+
     delete updatedUser.password;
     return updatedUser;
   }
