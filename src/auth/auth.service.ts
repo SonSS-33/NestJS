@@ -18,6 +18,7 @@ export class AuthService {
   ) {}
 
   async comparePassword(
+    //TO DO
     password: string,
     hashedPassword: string,
   ): Promise<boolean> {
@@ -26,6 +27,7 @@ export class AuthService {
 
   async signIn(username: string, password: string): Promise<SignInModel> {
     const user = await this.userService.getUserByUsername(username);
+    //TO DO
     if (!user || !(await this.comparePassword(password, user.password))) {
       throw new UnauthorizedException('Invalid credentials');
     }
@@ -34,8 +36,8 @@ export class AuthService {
       username: user.username,
       role: user.role,
     };
-    const accessToken = await this.jwtService.signAsync(payload);
 
-    return new SignInModel(accessToken);
+    const accessToken = await this.jwtService.signAsync(payload);
+    return new SignInModel(accessToken); //TO DO
   }
 }

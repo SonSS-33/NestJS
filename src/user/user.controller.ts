@@ -8,22 +8,20 @@ import {
   Post,
   Query,
   Req,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import {
-  CreateUserBodyDto,
+  RegisterUserBodyDto,
   DeleteUserParamsDto,
   GetUserParamsDto,
+  UpdateByAdminBodyDto,
+  UpdateByAdminParamsDto,
   UpdateUserBodyDto,
-  UpdateUserParamsDto,
 } from './dto/user.dto';
 import { Roles } from 'src/guards/roles.decorator';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { RoleType } from './enums/role.type';
-import { AuthGuard } from 'src/auth/middlewares/auth.guard';
-import { RolesGuard } from 'src/guards/roles.guard';
-import { PublicRoleType } from './enums/public-role.type';
+import { PaginationModel } from 'src/utils/pagination.model';
 
 @Controller('api/v1/user')
 export class UserController {
@@ -31,7 +29,7 @@ export class UserController {
 
   @Public()
   @Post('register')
-  async registerUser(@Body() body: CreateUserBodyDto) {
+  async registerUser(@Body() body: RegisterUserBodyDto) {
     return await this.userService.registerUser(
       body.email,
       body.username,
@@ -45,28 +43,35 @@ export class UserController {
     return await this.userService.getUser(params.userId);
   }
 
-  @UseGuards(AuthGuard, RolesGuard)
-  @Roles(RoleType.ADMIN, RoleType.USER)
+  @Roles(RoleType.ADMIN)
   @Put(':userId/update')
-  async update(
-    @Param() params: UpdateUserParamsDto,
-    @Body() body: UpdateUserBodyDto,
-    @Req() req: any,
+  async updateByAdmin(
+    @Param() params: UpdateByAdminParamsDto,
+    @Body() body: UpdateByAdminBodyDto,
   ) {
-    const currentUser = req.user;
-    const role: PublicRoleType =
-      currentUser.role === RoleType.ADMIN ? body.role : undefined;
+    const user = await this.userService.getUser(params.userId);
     return await this.userService.updateUser(
-      params.userId,
+      user,
       body.username,
       body.email,
       body.password,
-      role,
-      req.user,
+      body.role,
     );
   }
 
-  @UseGuards(AuthGuard, RolesGuard)
+  @Put('update')
+  async updateUser(@Body() body: UpdateUserBodyDto, @Req() req: any) {
+    const userId = req.user.userId;
+    const user = await this.userService.getUser(userId);
+    return await this.userService.updateUser(
+      user,
+      body.username,
+      body.email,
+      body.password,
+      body.role,
+    );
+  }
+
   @Roles(RoleType.ADMIN)
   @Delete(':userId/delete')
   async deleteUser(@Param() params: DeleteUserParamsDto) {
@@ -74,10 +79,12 @@ export class UserController {
     return await this.userService.deleteUser(user);
   }
 
-  @UseGuards(AuthGuard, RolesGuard)
   @Roles(RoleType.ADMIN)
   @Get('all')
   async findAll(@Query() query: any) {
-    return await this.userService.findAll(query.name, query.page, query.limit);
+    return await this.userService.findAll(
+      query.q,
+      new PaginationModel(query.page, query.limit),
+    );
   }
 }
