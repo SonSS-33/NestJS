@@ -20,10 +20,11 @@ export class UserService {
     role: RoleType,
   ) {
     const user = this.userRepository.create({
-      email,
-      username,
+      email: email,
+      username: username,
       password: await hash(password, 10),
-      role,
+      role: role,
+      createdAt: new Date(),
     });
     return await this.userRepository.save(user);
   }
@@ -35,7 +36,7 @@ export class UserService {
     const queryBuilder = this.userRepository.createQueryBuilder('user');
     queryBuilder.where('deleted_at IS NULL');
     if (q) {
-      queryBuilder.andWhere('user.username LIKE :name', { name: `%${q}%` });
+      queryBuilder.andWhere('user.username LIKE :q', { q: `%${q}%` });
     }
 
     if (pagination) {
@@ -47,7 +48,10 @@ export class UserService {
     return queryBuilder.getMany();
   }
 
-  async getUser(userId: number): Promise<UserEntity> {
+  async getUser(
+    userId: number,
+    isHiddenPassword: boolean,
+  ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
         id: userId,
@@ -59,15 +63,32 @@ export class UserService {
       throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
-    delete user.password;
+    if (isHiddenPassword) {
+      delete user.password;
+    }
+
     return user;
   }
 
-  async getUserByUsername(username: string): Promise<UserEntity> {
-    const user = await this.userRepository.findOneBy({ username });
+  async getUserByUsername(
+    username: string,
+    isHiddenPassword: boolean,
+  ): Promise<UserEntity> {
+    const user = await this.userRepository.findOne({
+      where: {
+        username: username,
+        deletedAt: IsNull(),
+      },
+    });
+
     if (!user) {
       throw new HttpException('USER_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
+
+    if (isHiddenPassword) {
+      delete user.password;
+    }
+
     return user;
   }
 
@@ -87,12 +108,15 @@ export class UserService {
       updateData.password = await hash(password, 10);
     }
 
-    await this.userRepository.update(user.id, updateData);
-    return await this.getUser(user.id);
-  }
+    await this.userRepository.update(
+      {
+        id: user.id,
+        deletedAt: IsNull(),
+      },
+      updateData,
+    );
 
-  async findOne(username: string): Promise<UserEntity | undefined> {
-    return this.userRepository.findOne({ where: { username } });
+    return await this.getUser(user.id, true);
   }
 
   async deleteUser(user: UserEntity) {

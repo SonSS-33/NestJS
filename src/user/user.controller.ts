@@ -40,7 +40,7 @@ export class UserController {
 
   @Get(':userId/detail')
   async getUser(@Param() params: GetUserParamsDto) {
-    return await this.userService.getUser(params.userId);
+    return await this.userService.getUser(params.userId, true);
   }
 
   @Roles(RoleType.ADMIN)
@@ -49,7 +49,7 @@ export class UserController {
     @Param() params: UpdateByAdminParamsDto,
     @Body() body: UpdateByAdminBodyDto,
   ) {
-    const user = await this.userService.getUser(params.userId);
+    const user = await this.userService.getUser(params.userId, true);
     return await this.userService.updateUser(
       user,
       body.username,
@@ -62,7 +62,7 @@ export class UserController {
   @Put('update')
   async updateUser(@Body() body: UpdateUserBodyDto, @Req() req: any) {
     const userId = req.user.userId;
-    const user = await this.userService.getUser(userId);
+    const user = await this.userService.getUser(userId, true);
     return await this.userService.updateUser(
       user,
       body.username,
@@ -75,7 +75,7 @@ export class UserController {
   @Roles(RoleType.ADMIN)
   @Delete(':userId/delete')
   async deleteUser(@Param() params: DeleteUserParamsDto) {
-    const user = await this.userService.getUser(params.userId);
+    const user = await this.userService.getUser(params.userId, true);
     return await this.userService.deleteUser(user);
   }
 
