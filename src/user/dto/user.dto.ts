@@ -10,8 +10,8 @@ import {
 } from 'class-validator';
 import { RoleType } from '../enums/role.type';
 import { PublicRoleType } from '../enums/public-role.type';
+
 export class RegisterUserBodyDto {
-  // TO DO
   @IsString()
   @IsNotEmpty()
   username: string;
@@ -48,7 +48,6 @@ export class DeleteUserParamsDto {
 }
 
 export class UpdateByAdminBodyDto {
-  // TO DO
   @IsString()
   @IsOptional()
   username?: string;
@@ -68,7 +67,6 @@ export class UpdateByAdminBodyDto {
 }
 
 export class UpdateUserBodyDto {
-  // TO DO
   @IsString()
   @IsOptional()
   username?: string;

@@ -91,6 +91,10 @@ export class UserService {
     return await this.getUser(user.id);
   }
 
+  async findOne(username: string): Promise<UserEntity | undefined> {
+    return this.userRepository.findOne({ where: { username } });
+  }
+
   async deleteUser(user: UserEntity) {
     await this.userRepository.update(
       {

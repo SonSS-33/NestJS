@@ -1,26 +1,51 @@
 // src/user/user.entity.ts
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { Exclude } from 'class-transformer';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  DeleteDateColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+
 import { RoleType } from '../enums/role.type';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MinLength,
+} from 'class-validator';
 
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @IsString()
+  @IsNotEmpty()
   @Column()
   username: string;
 
   @Column()
+  @IsEmail()
   email: string;
 
+  @IsOptional()
+  @IsString()
+  @MinLength(6)
   @Column()
-  @Exclude()
-  password: string;
+  password?: string;
 
   @Column()
   role: RoleType;
 
-  @Column({ name: 'deleted_at' })
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
 }
