@@ -6,6 +6,7 @@ import {
   DeleteDateColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { RoleType } from '../enums/role.type';
@@ -16,6 +17,7 @@ import {
   IsString,
   MinLength,
 } from 'class-validator';
+import { PostEntity } from 'src/post/entities/post.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -48,4 +50,7 @@ export class UserEntity {
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
+
+  @OneToMany(() => PostEntity, (post) => post.user)
+  posts: PostEntity[];
 }

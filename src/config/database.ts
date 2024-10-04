@@ -1,4 +1,6 @@
 import { registerAs } from '@nestjs/config';
+import { PostEntity } from 'src/post/entities/post.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
 export default registerAs('database', () => ({
   type: 'mysql',
@@ -8,5 +10,6 @@ export default registerAs('database', () => ({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   autoLoadEntities: true,
-  synchronize: false,
+  entities: [UserEntity, PostEntity],
+  synchronize: true,
 }));

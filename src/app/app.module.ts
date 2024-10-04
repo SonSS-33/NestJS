@@ -9,6 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import database from 'src/config/database';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/middlewares/jwt.auth.guard';
+import { PostModule } from 'src/post/post.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { JwtAuthGuard } from 'src/auth/middlewares/jwt.auth.guard';
     }),
     UserModule,
     AuthModule,
+    PostModule,
   ],
   controllers: [AppController],
   providers: [
