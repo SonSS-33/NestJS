@@ -25,7 +25,7 @@ export class RegisterUserBodyDto {
   @IsNotEmpty()
   password: string;
 
-  @IsEnum(PublicRoleType)
+  @IsEnum(RoleType)
   role: RoleType;
 }
 
