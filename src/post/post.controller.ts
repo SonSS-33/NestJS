@@ -44,7 +44,7 @@ export class PostController {
     return await this.postService.get(params.postId);
   }
 
-  @Put('update')
+  @Put(':id/update')
   async updatePost(@Body() body: UpdatePostBodyDto, @Req() req: any) {
     const postId = req.post.postId;
     const post = await this.postService.get(postId);

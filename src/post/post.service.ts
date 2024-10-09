@@ -13,16 +13,11 @@ export class PostService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async registerPost(
-    title: string,
-    detail: string,
-    userId: number,
-  ): Promise<PostEntity> {
-    const user = await this.userRepository.findOneBy({ id: userId });
+  async registerPost(title: string, detail: string, userId: number) {
+    const user = this.userRepository.create({ id: userId });
     if (!user) {
       throw new Error('User not found');
     }
-
     const post = this.postRepository.create({ title, detail, user });
     return await this.postRepository.save(post);
   }
