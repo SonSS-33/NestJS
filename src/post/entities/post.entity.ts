@@ -2,6 +2,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -24,6 +25,9 @@ export class PostEntity {
 
   @UpdateDateColumn({ name: 'updated_at' })
   updated_at: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deleted_at: Date;
   @ManyToOne(() => UserEntity, (user) => user.posts)
   user: UserEntity;
 }
