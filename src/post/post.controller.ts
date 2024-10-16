@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  UseGuards,
   Get,
   Param,
   Put,
@@ -10,7 +9,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { JwtAuthGuard } from 'src/auth/middlewares/jwt.auth.guard';
 import { Public } from 'src/auth/decorators/public.decorator';
 import {
   DeletePostParamsDto,
@@ -18,42 +16,42 @@ import {
   UpdatePostBodyDto,
 } from './dtos/post.dto';
 
-@Controller('api/v1/posts')
+@Controller('api/v1/post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Post('register')
-  @UseGuards(JwtAuthGuard)
+  @Post('register') //change name
   async registerPost(
-    @Body() body: { title: string; detail: string; userId: number },
+    @Body() body: { title: string; detail: string; userId: number }, //TO DO
   ) {
-    return await this.postService.registerPost(
+    return await this.postService.createPost(
+      body.userId, //TO DO
       body.title,
       body.detail,
-      body.userId,
     );
   }
+
   @Public()
   @Get('all')
   async findPosts() {
-    return await this.postService.findAll();
+    return await this.postService.findAllPosts();
   }
 
-  @Get('/:id/detail')
+  @Get('/:id/detail') //TO DO
   async findPost(@Param() params: GetPostParamsDto) {
-    return await this.postService.get(params.postId);
+    return await this.postService.getPost(params.postId);
   }
 
-  @Put(':id/update')
+  @Put(':id/update') //TO DO
   async updatePost(@Body() body: UpdatePostBodyDto, @Req() req: any) {
-    const postId = req.post.postId;
-    const post = await this.postService.get(postId);
+    const postId = req.post.postId; //TO DO
+    const post = await this.postService.getPost(postId);
     return await this.postService.updatePost(post, body.title, body.detail);
   }
 
-  @Delete(':id/delete')
+  @Delete(':id/delete') //TO DO
   async deletePost(@Param() param: DeletePostParamsDto) {
-    const post = await this.postService.get(param.postId);
+    const post = await this.postService.getPost(param.postId);
     return await this.postService.deletePost(post);
   }
 }

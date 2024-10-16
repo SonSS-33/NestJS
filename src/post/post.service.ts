@@ -9,25 +9,32 @@ export class PostService {
   constructor(
     @InjectRepository(PostEntity)
     private readonly postRepository: Repository<PostEntity>,
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  async registerPost(title: string, detail: string, userId: number) {
-    const user = this.userRepository.create({ id: userId });
-    if (!user) {
-      throw new Error('User not found');
-    }
-    const post = this.postRepository.create({ title, detail, user });
-    return await this.postRepository.save(post);
+  async createPost(user: UserEntity, title: string, detail: string) {
+    const newPost = new PostEntity();
+    newPost.userId = user.id;
+    newPost.title = title;
+    newPost.detail = detail;
+    newPost.createdAt = new Date();
+    return await this.postRepository.save(newPost);
   }
 
-  async findAll() {
-    return await this.postRepository.find();
+  async findAllPosts() {
+    return await this.postRepository.find({
+      where: {
+        deletedAt: IsNull(),
+      },
+    });
   }
 
-  async get(id: number) {
-    return await this.postRepository.findOneBy({ id });
+  async getPost(postId: number) {
+    return await this.postRepository.findOne({
+      where: {
+        id: postId,
+        deletedAt: IsNull(),
+      },
+    });
   }
 
   async updatePost(post: PostEntity, title: string, detail: string) {
@@ -38,20 +45,22 @@ export class PostService {
     await this.postRepository.update(
       {
         id: post.id,
-        deleted_at: IsNull(),
+        deletedAt: IsNull(),
       },
       updateData,
     );
-    return await this.get(post.id);
+    return await this.getPost(post.id);
   }
 
   async deletePost(post: PostEntity) {
     await this.postRepository.update(
       {
         id: post.id,
-        deleted_at: IsNull(),
+        deletedAt: IsNull(),
       },
-      { deleted_at: new Date() },
+      {
+        deletedAt: new Date(),
+      },
     );
     return true;
   }

@@ -14,6 +14,9 @@ export class PostEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ name: 'user_id' })
+  userId: number;
+
   @Column()
   title: string;
 
@@ -21,13 +24,14 @@ export class PostEntity {
   detail: string;
 
   @CreateDateColumn({ name: 'created_at' })
-  created_at: Date;
+  createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updated_at: Date;
+  updatedAt: Date;
 
   @DeleteDateColumn({ name: 'deleted_at' })
-  deleted_at: Date;
+  deletedAt: Date;
+
   @ManyToOne(() => UserEntity, (user) => user.posts)
   user: UserEntity;
 }
