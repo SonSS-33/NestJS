@@ -12,7 +12,7 @@ import { CommentService } from './comment.service';
 import {
   CreateCommentBodyDto,
   DeleteCommentParamDto,
-  GetCommetParamDto,
+  GetCommentParamDto,
   UpdateCommentBodyDto,
 } from './dtos/comment.dto';
 
@@ -22,14 +22,13 @@ export class CommentController {
 
   @Post('comments')
   async createComment(@Body() body: CreateCommentBodyDto, @Req() req: any) {
-    const userId = req.user['userId'];
-
+    const userId = req.user.userId;
     return this.commentService.createComment(userId, body);
   }
 
   @Put(':commentId/update')
   async updateComment(
-    @Param() param: GetCommetParamDto,
+    @Param() param: GetCommentParamDto,
     @Body() body: UpdateCommentBodyDto,
     @Req() req: any,
   ) {

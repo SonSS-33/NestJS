@@ -12,7 +12,7 @@ export class UpdateCommentBodyDto {
   content: string;
 }
 
-export class GetCommetParamDto {
+export class GetCommentParamDto {
   @Type(() => Number)
   @IsNumber()
   commentId: number;

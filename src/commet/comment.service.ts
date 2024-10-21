@@ -12,7 +12,6 @@ import { UserEntity } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class CommentService {
-  // Sửa tên service
   constructor(
     @InjectRepository(CommentEntity)
     private readonly commentRepository: Repository<CommentEntity>,
@@ -27,7 +26,7 @@ export class CommentService {
     CreateCommentBodyDto: CreateCommentBodyDto,
   ) {
     const post = await this.postRepository.findOne({
-      where: { id: CreateCommentBodyDto.postId, deletedAt: IsNull() },
+      where: { id: CreateCommentBodyDto.postId },
     });
     if (!post) {
       throw new NotFoundException('Post not found');

@@ -13,6 +13,12 @@ export class CommentEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column()
+  userId: number;
+
+  @Column()
+  postId: number;
+
   @Column({ type: 'text' })
   content: string;
 
@@ -23,7 +29,7 @@ export class CommentEntity {
   updatedAt: Date;
 
   @CreateDateColumn({ name: 'deleted_at' })
-  deletedAt: Date;
+  deletedAt: Date | null;
 
   @ManyToOne(() => UserEntity, (user) => user.comments)
   user: UserEntity;
