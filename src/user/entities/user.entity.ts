@@ -18,6 +18,7 @@ import {
   MinLength,
 } from 'class-validator';
 import { PostEntity } from 'src/post/entities/post.entity';
+import { CommentEntity } from 'src/commet/entities/comment.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -52,5 +53,11 @@ export class UserEntity {
   deletedAt: Date;
 
   @OneToMany(() => PostEntity, (post) => post.user)
-  posts: PostEntity[];
+  post: PostEntity[];
+
+  @OneToMany(() => CommentEntity, (comment) => comment.user)
+  comments: CommentEntity[];
+
+  //   @OneToMany(() => LikeEntity, (like) => like.user)
+  //   likes: LikeEntity[];
 }

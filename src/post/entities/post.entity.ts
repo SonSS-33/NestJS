@@ -1,3 +1,5 @@
+import { CommentEntity } from 'src/commet/entities/comment.entity';
+
 import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Column,
@@ -5,6 +7,7 @@ import {
   DeleteDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,8 +33,14 @@ export class PostEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt: Date;
+  deletedAt: Date | null;
 
-  @ManyToOne(() => UserEntity, (user) => user.posts)
+  @ManyToOne(() => UserEntity, (user) => user.post)
   user: UserEntity;
+
+  @OneToMany(() => CommentEntity, (comment) => comment.post)
+  comments: CommentEntity[];
+
+  // @OneToMany(() => LikeEntity, (like) => like.post)
+  // likes: LikeEntity[];
 }
