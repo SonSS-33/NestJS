@@ -17,11 +17,13 @@ import {
   UpdateCommentBodyDto,
 } from './dtos/comment.dto';
 import { GetPostParamsDto } from 'src/post/dtos/post.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('api/v1')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
+  @Public()
   @Get(':postId/getAll')
   async getAllComment(@Param() param: GetPostParamsDto) {
     return await this.commentService.findAllComments(param.postId);

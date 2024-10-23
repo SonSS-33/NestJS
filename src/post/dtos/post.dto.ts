@@ -28,3 +28,10 @@ export class DeletePostParamsDto {
   @IsNumber()
   postId: number;
 }
+
+export class PostDto {
+  id: number;
+  title: string;
+  content: string;
+  likeCount: number;
+}

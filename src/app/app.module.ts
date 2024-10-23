@@ -11,6 +11,7 @@ import { RolesGuard } from 'src/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/middlewares/jwt.auth.guard';
 import { PostModule } from 'src/post/post.module';
 import { CommetModule } from 'src/commet/comment.module';
+import { LikeModule } from 'src/like/like.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { CommetModule } from 'src/commet/comment.module';
     AuthModule,
     PostModule,
     CommetModule,
+    LikeModule,
   ],
   controllers: [AppController],
   providers: [

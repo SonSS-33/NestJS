@@ -6,10 +6,16 @@ import { PostEntity } from 'src/post/entities/post.entity';
 import { CommentEntity } from './entities/comment.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { PostModule } from 'src/post/post.module';
+import { LikeEntity } from 'src/like/entities/like.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CommentEntity, PostEntity, UserEntity]),
+    TypeOrmModule.forFeature([
+      CommentEntity,
+      PostEntity,
+      UserEntity,
+      LikeEntity,
+    ]),
     PostModule,
   ],
   controllers: [CommentController],

@@ -19,6 +19,7 @@ import {
 } from 'class-validator';
 import { PostEntity } from 'src/post/entities/post.entity';
 import { CommentEntity } from 'src/commet/entities/comment.entity';
+import { LikeEntity } from 'src/like/entities/like.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -58,6 +59,6 @@ export class UserEntity {
   @OneToMany(() => CommentEntity, (comment) => comment.user)
   comments: CommentEntity[];
 
-  //   @OneToMany(() => LikeEntity, (like) => like.user)
-  //   likes: LikeEntity[];
+  @OneToMany(() => LikeEntity, (like) => like.user)
+  likes: LikeEntity[];
 }

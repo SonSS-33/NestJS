@@ -1,30 +1,20 @@
 import {
   Entity,
   PrimaryGeneratedColumn,
-  Column,
   ManyToOne,
   CreateDateColumn,
+  Column,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany,
 } from 'typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { PostEntity } from 'src/post/entities/post.entity';
-import { LikeEntity } from 'src/like/entities/like.entity';
+import { CommentEntity } from 'src/commet/entities/comment.entity';
 
-@Entity('comment')
-export class CommentEntity {
+@Entity('like')
+export class LikeEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @Column()
-  userId: number;
-
-  @Column()
-  postId: number;
-
-  @Column({ type: 'text' })
-  content: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -33,14 +23,19 @@ export class CommentEntity {
   updatedAt: Date;
 
   @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt: Date | null;
+  deletedAt: Date;
 
-  @ManyToOne(() => UserEntity, (user) => user.comments)
+  @ManyToOne(() => UserEntity, (user) => user.likes, { nullable: false })
   user: UserEntity;
 
-  @ManyToOne(() => PostEntity, (post) => post.comments)
+  @ManyToOne(() => PostEntity, (post) => post.likes, { nullable: true })
   post: PostEntity;
 
-  @OneToMany(() => LikeEntity, (like) => like.comment)
-  likes: LikeEntity[];
+  @ManyToOne(() => CommentEntity, (comment) => comment.likes, {
+    nullable: true,
+  })
+  comment: CommentEntity;
+
+  @Column({ type: 'enum', enum: ['post', 'comment'], nullable: false })
+  targetType: 'post' | 'comment';
 }
