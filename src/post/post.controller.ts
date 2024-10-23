@@ -34,7 +34,7 @@ export class PostController {
     return await this.postService.findAllPosts();
   }
 
-  @Get('/:postId/detail')
+  @Get(':postId/detail')
   async findPost(@Param() params: GetPostParamsDto) {
     return await this.postService.getPost(params.postId);
   }

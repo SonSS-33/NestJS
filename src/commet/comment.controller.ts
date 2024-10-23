@@ -6,6 +6,7 @@ import {
   Put,
   Param,
   Delete,
+  Get,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 
@@ -15,10 +16,16 @@ import {
   GetCommentParamDto,
   UpdateCommentBodyDto,
 } from './dtos/comment.dto';
+import { GetPostParamsDto } from 'src/post/dtos/post.dto';
 
 @Controller('api/v1')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
+
+  @Get(':postId/getAll')
+  async getAllComment(@Param() param: GetPostParamsDto) {
+    return await this.commentService.findAllComments(param.postId);
+  }
 
   @Post('comments')
   async createComment(@Body() body: CreateCommentBodyDto, @Req() req: any) {
