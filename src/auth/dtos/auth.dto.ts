@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
 export class LoginBodyDto {
   @IsString()
   @IsNotEmpty()
-  username: string;
+  email: string;
 
   @IsString()
   @IsNotEmpty()
@@ -11,10 +11,6 @@ export class LoginBodyDto {
   password: string;
 }
 export class RegisterBodyDto {
-  @IsString()
-  @IsNotEmpty()
-  username: string;
-
   @IsEmail()
   @IsNotEmpty()
   email: string;

@@ -15,17 +15,30 @@ export class UserService {
 
   async registerUser(
     email: string,
-    username: string,
     password: string,
     role: RoleType,
-  ) {
+    firstName: string,
+    lastName: string,
+    dateOfBirth: Date,
+    address: string,
+    bio?: string,
+  ): Promise<UserEntity> {
+    const hashedPassword = await hash(password, 10);
+
     const user = this.userRepository.create({
-      email: email,
-      username: username,
-      password: await hash(password, 10),
-      role: role,
-      createdAt: new Date(),
+      email,
+      password: hashedPassword,
+      isActive: true,
+      role,
+      userDetail: {
+        first_name: firstName,
+        last_name: lastName,
+        date_of_birth: dateOfBirth,
+        address,
+        bio,
+      },
     });
+
     return await this.userRepository.save(user);
   }
 
@@ -57,6 +70,7 @@ export class UserService {
         id: userId,
         deletedAt: IsNull(),
       },
+      relations: ['userDetail'],
     });
 
     if (!user) {
@@ -71,12 +85,12 @@ export class UserService {
   }
 
   async getUserByUsername(
-    username: string,
+    email: string,
     isHiddenPassword: boolean,
   ): Promise<UserEntity> {
     const user = await this.userRepository.findOne({
       where: {
-        username: username,
+        email: email,
         deletedAt: IsNull(),
       },
     });
@@ -94,14 +108,12 @@ export class UserService {
 
   async updateUser(
     user: UserEntity,
-    username: string | undefined,
     email: string | undefined,
     password: string | undefined,
     role: RoleType | undefined,
   ) {
     const updateData: Partial<UserEntity> = {
       email: email,
-      username: username,
       role: role,
     };
     if (password) {

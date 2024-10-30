@@ -13,16 +13,16 @@ import { UserService } from './user.service';
 import {
   RegisterUserBodyDto,
   DeleteUserParamsDto,
-  GetUserParamsDto,
   UpdateByAdminBodyDto,
   UpdateByAdminParamsDto,
   UpdateUserBodyDto,
+  GetUserDetailParamsDto,
 } from './dto/user.dto';
 import { Roles } from 'src/guards/roles.decorator';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { RoleType } from './enums/role.type';
 import { PaginationModel } from 'src/utils/pagination.model';
-
+import { UserDetailResponseDto } from './dto/user.detail.dto';
 @Controller('api/v1/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -30,17 +30,23 @@ export class UserController {
   @Public()
   @Post('register')
   async registerUser(@Body() body: RegisterUserBodyDto) {
+    const dateOfBirth = new Date(body.dateOfBirth);
     return await this.userService.registerUser(
       body.email,
-      body.username,
       body.password,
       body.role,
+      body.firstName,
+      body.lastName,
+      dateOfBirth,
+      body.address,
+      body.bio,
     );
   }
 
   @Get(':userId/detail')
-  async getUser(@Param() params: GetUserParamsDto) {
-    return await this.userService.getUser(params.userId, true);
+  async getUser(@Param() params: GetUserDetailParamsDto) {
+    const user = await this.userService.getUser(params.userId, true);
+    return new UserDetailResponseDto(user);
   }
 
   @Roles(RoleType.ADMIN)
@@ -52,7 +58,6 @@ export class UserController {
     const user = await this.userService.getUser(params.userId, true);
     return await this.userService.updateUser(
       user,
-      body.username,
       body.email,
       body.password,
       body.role,
@@ -65,7 +70,6 @@ export class UserController {
     const user = await this.userService.getUser(userId, true);
     return await this.userService.updateUser(
       user,
-      body.username,
       body.email,
       body.password,
       body.role,

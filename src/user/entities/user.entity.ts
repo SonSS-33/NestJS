@@ -6,30 +6,22 @@ import {
   DeleteDateColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
+  OneToOne,
+  JoinColumn,
+  // OneToMany,
 } from 'typeorm';
 
 import { RoleType } from '../enums/role.type';
-import {
-  IsEmail,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MinLength,
-} from 'class-validator';
-import { PostEntity } from 'src/post/entities/post.entity';
-import { CommentEntity } from 'src/commet/entities/comment.entity';
-import { LikeEntity } from 'src/like/entities/like.entity';
+import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
+import { UserDetailEntity } from './user.detail.entity';
+// import { PostEntity } from 'src/post/entities/post.entity';
+// import { CommentEntity } from 'src/commet/entities/comment.entity';
+// import { LikeEntity } from 'src/like/entities/like.entity';
 
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @IsString()
-  @IsNotEmpty()
-  @Column()
-  username: string;
 
   @Column()
   @IsEmail()
@@ -40,6 +32,9 @@ export class UserEntity {
   @MinLength(6)
   @Column()
   password?: string;
+
+  @Column({ name: 'is_active' })
+  isActive: boolean;
 
   @Column()
   role: RoleType;
@@ -53,12 +48,17 @@ export class UserEntity {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
 
-  @OneToMany(() => PostEntity, (post) => post.user)
-  post: PostEntity[];
+  @OneToOne(() => UserDetailEntity, (userDetail) => userDetail.user, {
+    cascade: true,
+  })
+  @JoinColumn()
+  userDetail: UserDetailEntity;
+  // @OneToMany(() => PostEntity, (post) => post.user)
+  // post: PostEntity[];
 
-  @OneToMany(() => CommentEntity, (comment) => comment.user)
-  comments: CommentEntity[];
+  // @OneToMany(() => CommentEntity, (comment) => comment.user)
+  // comments: CommentEntity[];
 
-  @OneToMany(() => LikeEntity, (like) => like.user)
-  likes: LikeEntity[];
+  // @OneToMany(() => LikeEntity, (like) => like.user)
+  // likes: LikeEntity[];
 }

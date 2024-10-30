@@ -10,7 +10,7 @@ export class AuthController {
   @Public()
   @Post('login')
   async signIn(@Body() body: LoginBodyDto) {
-    const token = await this.authService.signIn(body.username, body.password);
+    const token = await this.authService.signIn(body.email, body.password);
     return token;
   }
 

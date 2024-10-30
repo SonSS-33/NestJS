@@ -1,35 +1,48 @@
 import { Type } from 'class-transformer';
 import {
   IsString,
-  IsNotEmpty,
   IsEmail,
   MinLength,
   IsOptional,
   IsNumber,
   IsEnum,
+  IsBoolean,
 } from 'class-validator';
 import { RoleType } from '../enums/role.type';
 import { PublicRoleType } from '../enums/public-role.type';
 
 export class RegisterUserBodyDto {
-  @IsString()
-  @IsNotEmpty()
-  username: string;
-
   @IsEmail()
-  @IsNotEmpty()
   email: string;
 
   @IsString()
   @MinLength(6)
-  @IsNotEmpty()
   password: string;
+
+  @IsBoolean()
+  isActive: boolean;
 
   @IsEnum(PublicRoleType)
   role: RoleType;
+
+  @IsString()
+  firstName: string;
+
+  @IsString()
+  lastName: string;
+
+  @IsString()
+  dateOfBirth: string;
+
+  @IsString()
+  address: string;
+
+  @IsString()
+  @IsOptional()
+  bio?: string;
 }
 
-export class GetUserParamsDto {
+export class GetUserDetailParamsDto {
   @Type(() => Number)
   @IsNumber()
   userId: number;
