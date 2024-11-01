@@ -17,19 +17,19 @@ export class UserDetailEntity {
   @OneToOne(() => UserEntity, (user) => user.userDetail)
   user: UserEntity;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column()
   first_name: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column()
   last_name: string;
 
-  @Column({ type: 'date' })
-  date_of_birth: Date;
+  @Column()
+  date_of_birth: Date | null;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column()
   address: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column()
   bio: string;
 
   @CreateDateColumn()

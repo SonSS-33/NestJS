@@ -22,7 +22,7 @@ import { Roles } from 'src/guards/roles.decorator';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { RoleType } from './enums/role.type';
 import { PaginationModel } from 'src/utils/pagination.model';
-import { UserDetailResponseDto } from './dto/user.detail.dto';
+import { UserDetailResponseDto } from './dto/user.dto';
 @Controller('api/v1/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -56,11 +56,17 @@ export class UserController {
     @Body() body: UpdateByAdminBodyDto,
   ) {
     const user = await this.userService.getUser(params.userId, true);
+    const dateOfBirth = new Date(body.dateOfBirth);
     return await this.userService.updateUser(
       user,
       body.email,
       body.password,
       body.role,
+      body.firstName,
+      body.lastName,
+      dateOfBirth,
+      body.address,
+      body.bio,
     );
   }
 
@@ -68,11 +74,17 @@ export class UserController {
   async updateUser(@Body() body: UpdateUserBodyDto, @Req() req: any) {
     const userId = req.user.userId;
     const user = await this.userService.getUser(userId, true);
+    const dateOfBirth = new Date(body.dateOfBirth);
     return await this.userService.updateUser(
       user,
       body.email,
       body.password,
       body.role,
+      body.firstName,
+      body.lastName,
+      dateOfBirth,
+      body.address,
+      body.bio,
     );
   }
 

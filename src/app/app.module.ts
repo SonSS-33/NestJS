@@ -9,7 +9,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import database from 'src/config/database';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/middlewares/jwt.auth.guard';
-// import { PostModule } from 'src/post/post.module';
+import { PostModule } from 'src/post/post.module';
 // import { CommetModule } from 'src/commet/comment.module';
 // import { LikeModule } from 'src/like/like.module';
 
@@ -27,7 +27,7 @@ import { JwtAuthGuard } from 'src/auth/middlewares/jwt.auth.guard';
     }),
     UserModule,
     AuthModule,
-    // PostModule,
+    PostModule,
     // CommetModule,
     // LikeModule,
   ],

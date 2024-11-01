@@ -6,10 +6,11 @@ import {
   IsOptional,
   IsNumber,
   IsEnum,
-  IsBoolean,
 } from 'class-validator';
 import { RoleType } from '../enums/role.type';
 import { PublicRoleType } from '../enums/public-role.type';
+import { UserDetailEntity } from '../entities/user.detail.entity';
+import { UserEntity } from '../entities/user.entity';
 
 export class RegisterUserBodyDto {
   @IsEmail()
@@ -18,9 +19,6 @@ export class RegisterUserBodyDto {
   @IsString()
   @MinLength(6)
   password: string;
-
-  @IsBoolean()
-  isActive: boolean;
 
   @IsEnum(PublicRoleType)
   role: RoleType;
@@ -61,39 +59,75 @@ export class DeleteUserParamsDto {
 }
 
 export class UpdateByAdminBodyDto {
-  @IsString()
-  @IsOptional()
-  username?: string;
-
   @IsOptional()
   @IsEmail()
-  email?: string;
+  email: string;
 
-  @IsOptional()
   @IsString()
   @MinLength(6)
-  password?: string;
+  password: string;
 
-  @IsOptional()
-  @IsEnum(RoleType)
+  @IsEnum(PublicRoleType)
   role: RoleType;
+
+  @IsString()
+  firstName: string;
+
+  @IsString()
+  lastName: string;
+
+  @IsString()
+  dateOfBirth: string;
+
+  @IsString()
+  address: string;
+
+  @IsString()
+  @IsOptional()
+  bio?: string;
 }
 
 export class UpdateUserBodyDto {
-  @IsString()
-  @IsOptional()
-  username?: string;
-
   @IsOptional()
   @IsEmail()
   email?: string;
 
-  @IsOptional()
   @IsString()
   @MinLength(6)
-  password?: string;
+  password: string;
 
-  @IsOptional()
   @IsEnum(PublicRoleType)
   role: RoleType;
+
+  @IsString()
+  firstName: string;
+
+  @IsString()
+  lastName: string;
+
+  @IsString()
+  dateOfBirth: string;
+
+  @IsString()
+  address: string;
+
+  @IsString()
+  @IsOptional()
+  bio?: string;
+}
+
+export class UserDetailResponseDto {
+  id: number;
+  email: string;
+  isActive: boolean;
+  role: RoleType;
+  userDetail: UserDetailEntity;
+
+  constructor(user: UserEntity) {
+    this.id = user.id;
+    this.email = user.email;
+    this.isActive = user.isActive;
+    this.role = user.role;
+    this.userDetail = user.userDetail;
+  }
 }

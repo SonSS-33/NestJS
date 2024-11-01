@@ -5,12 +5,15 @@ import { UserEntity } from './entities/user.entity';
 import { hash } from 'bcryptjs';
 import { RoleType } from './enums/role.type';
 import { PaginationModel } from 'src/utils/pagination.model';
+import { UserDetailEntity } from './entities/user.detail.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(UserDetailEntity)
+    private readonly userDetailRepository: Repository<UserDetailEntity>,
   ) {}
 
   async registerUser(
@@ -111,6 +114,11 @@ export class UserService {
     email: string | undefined,
     password: string | undefined,
     role: RoleType | undefined,
+    first_name: string | undefined,
+    last_name: string | undefined,
+    date_of_birth: Date | undefined,
+    address: string | undefined,
+    bio?: string | undefined,
   ) {
     const updateData: Partial<UserEntity> = {
       email: email,
@@ -127,6 +135,14 @@ export class UserService {
       },
       updateData,
     );
+    const userDetailUpdateData = {
+      first_name,
+      last_name,
+      date_of_birth,
+      address,
+      bio,
+    };
+    await this.userDetailRepository.update(user.id, userDetailUpdateData);
 
     return await this.getUser(user.id, true);
   }
