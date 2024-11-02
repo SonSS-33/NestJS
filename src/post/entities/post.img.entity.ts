@@ -19,7 +19,7 @@ export class PostImageEntity {
   @JoinColumn({ name: 'post_id' })
   post: PostEntity;
 
-  @Column({ length: 255 })
+  @Column()
   imageUrl: string;
 
   @CreateDateColumn({ name: 'created_at' })
@@ -37,6 +37,6 @@ export class PostImageEntity {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
 
-  @Column({ name: 'deleted_by' })
+  @Column({ name: 'deleted_by', default: null })
   deletedBy: number;
 }

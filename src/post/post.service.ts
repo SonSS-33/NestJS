@@ -28,14 +28,12 @@ export class PostService {
 
     const savedPost = await this.postRepository.save(newPost);
 
-    // Lưu ảnh nếu có
     if (images && images.length > 0) {
       const postImages = images.map((imageUrl) => {
         const postImage = this.postImageRepository.create({
-          post: savedPost, // Liên kết ảnh với bài viết
+          post: savedPost,
           imageUrl: imageUrl,
           createdBy: userId,
-          updatedBy: userId,
         });
         return postImage;
       });

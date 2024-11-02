@@ -69,16 +69,14 @@ export class PostController {
       body.title,
       body.content,
       userId,
-    ); // Thêm userId vào phương thức updatePost
+    );
   }
 
   @Delete(':postId/delete')
   async deletePost(@Param() param: DeletePostParamsDto, @Req() req: any) {
     const userId = req.user.userId;
     const post = await this.postService.getPost(param.postId);
-
     if (!post || post.user.id !== userId) {
-      // Chỉnh sửa kiểm tra quyền
       throw new ForbiddenException('You can only delete your own post');
     }
 

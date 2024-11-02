@@ -21,31 +21,31 @@ export class PostEntity {
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @Column({ length: 255 })
+  @Column()
   title: string;
 
-  @Column({ type: 'text' })
+  @Column()
   content: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @Column({ name: 'created_by', type: 'int', nullable: true })
+  @Column({ name: 'created_by' })
   createdBy: number;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn({ name: ' updated_at' })
   updatedAt: Date;
 
-  @Column({ name: 'updated_by', type: 'int', nullable: true })
+  @Column({ name: ' updated_by', nullable: true })
   updatedBy: number;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date;
 
-  @Column({ name: 'deleted_by', type: 'int', nullable: true })
+  @Column({ name: 'deleted_by', nullable: true })
   deletedBy: number;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ name: 'like_count', default: 0 })
   likeCount: number;
 
   @OneToMany(() => PostImageEntity, (image) => image.post)
