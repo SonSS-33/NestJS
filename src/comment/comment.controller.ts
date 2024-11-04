@@ -89,16 +89,17 @@ export class CommentController {
   // Comment Reply CRUD methods
   @Post(':commentId/reply/create')
   async createCommentReply(
-    @Param() params: GetCommentReplyParamDto,
+    @Param() params: GetCommentParamDto,
     @Body() body: CreateCommentReplyBodyDto,
     @Req() req: any,
   ) {
     const userId = req.user.userId;
-    return await this.commentService.createCommentReply(
+    const newReply = await this.commentService.createCommentReply(
       userId,
       params.commentId,
       body.content,
     );
+    return newReply;
   }
 
   @Get(':commentId/reply/:replyId/detail')
@@ -112,21 +113,12 @@ export class CommentController {
 
   @Put(':commentId/reply/:replyId/update')
   async updateCommentReply(
-    @Param() param: GetCommentReplyParamDto,
+    @Param() params: GetCommentReplyParamDto,
     @Body() body: UpdateCommentReplyBodyDto,
     @Req() req: any,
   ) {
-    const replyId = param.commentId;
+    const replyId = params.replyId;
     const userId = req.user.userId;
-
-    const reply = await this.commentService.getCommentReply(replyId);
-    if (!reply) {
-      throw new NotFoundException('Comment reply not found');
-    }
-
-    if (reply.user.id !== userId) {
-      throw new ForbiddenException('You can only update your own reply');
-    }
 
     return await this.commentService.updateCommentReply(
       replyId,

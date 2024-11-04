@@ -1,6 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { CommentEntity } from './entities/comment.entity';
 import { UpdateCommentBodyDto } from './dtos/comment.dto';
 import { CommentReplyEntity } from './entities/commentReply.entity';
@@ -25,7 +29,7 @@ export class CommentService {
     imageUrl?: string,
   ): Promise<CommentEntity> {
     const post = await this.postRepository.findOne({
-      where: { id: postId, deletedAt: null },
+      where: { id: postId, deletedAt: IsNull() },
     });
     if (!post) {
       throw new NotFoundException('Post not found or has been deleted');
@@ -86,7 +90,7 @@ export class CommentService {
     content: string,
   ): Promise<CommentReplyEntity> {
     const comment = await this.commentRepository.findOne({
-      where: { id: commentId },
+      where: { id: commentId, deletedAt: IsNull() },
     });
     if (!comment) throw new NotFoundException('Comment not found');
 
@@ -95,6 +99,7 @@ export class CommentService {
       content,
       createdAt: new Date(),
       createdBy: userId,
+      user: { id: userId },
     });
     return await this.commentReplyRepository.save(newReply);
   }
@@ -113,6 +118,14 @@ export class CommentService {
   ): Promise<CommentReplyEntity> {
     const reply = await this.getCommentReply(replyId);
     if (!reply) throw new NotFoundException('Comment reply not found');
+
+    if (!reply.user) {
+      throw new NotFoundException('User not found for this reply');
+    }
+
+    if (reply.user.id !== userId) {
+      throw new ForbiddenException('You can only update your own reply');
+    }
 
     await this.commentReplyRepository.update(replyId, {
       content,
