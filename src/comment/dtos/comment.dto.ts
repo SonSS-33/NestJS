@@ -6,7 +6,6 @@ import {
   IsInt,
   IsDateString,
   IsNumber,
-  IsArray,
   IsUrl,
 } from 'class-validator';
 
@@ -28,14 +27,19 @@ export class CreateCommentBodyDto {
   @IsString()
   content: string;
 
-  @IsArray()
   @IsOptional()
-  @IsUrl({}, { each: true })
-  images?: string[];
+  @IsUrl()
+  imageUrl?: string;
 
   @IsNotEmpty()
   @IsInt()
+  @Type(() => Number)
   postId: number;
+
+  @IsOptional()
+  @IsInt()
+  @Type(() => Number)
+  userId?: number;
 }
 
 export class UpdateCommentBodyDto {
@@ -43,56 +47,30 @@ export class UpdateCommentBodyDto {
   @IsString()
   content: string;
 
-  @IsArray()
   @IsOptional()
-  @IsUrl({}, { each: true })
-  images?: string[];
+  @IsUrl()
+  imageUrl?: string;
 }
-
-export class CommentResponseDto {
-  id: number;
-  content: string;
-  image_url: string;
-  createdAt: Date;
-  updatedAt: Date;
-  like_count: number;
-  deletedAt?: Date;
-}
-
 // DTO cho Comment Reply
 export class GetCommentReplyParamDto {
+  @Type(() => Number)
   @IsInt()
   commentId: number;
 
+  @Type(() => Number)
   @IsInt()
-  commentReplyId: number;
+  replyId: number;
 }
 export class CreateCommentReplyBodyDto {
   @IsNotEmpty()
   @IsString()
   content: string;
-
-  @IsNotEmpty()
-  @IsInt()
-  commentId: number;
 }
 
 export class UpdateCommentReplyBodyDto {
   @IsNotEmpty()
   @IsString()
   content: string;
-
-  @IsOptional()
-  @IsString()
-  image_url?: string;
-}
-
-export class CommentReplyResponseDto {
-  id: number;
-  content: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 
 // DTO cho Comment Ban
@@ -109,7 +87,7 @@ export class CreateCommentBanBodyDto {
 
   @IsNotEmpty()
   @IsDateString()
-  banned_until: Date;
+  bannedUntil: Date;
 
   @IsNotEmpty()
   @IsString()
@@ -119,7 +97,7 @@ export class CreateCommentBanBodyDto {
 export class UpdateCommentBanBodyDto {
   @IsNotEmpty()
   @IsDateString()
-  banned_until: Date;
+  bannedUntil: Date;
 
   @IsOptional()
   @IsString()
@@ -129,7 +107,7 @@ export class UpdateCommentBanBodyDto {
 export class CommentBanResponseDto {
   id: number;
   userId: number;
-  banned_until: Date;
+  bannedUntil: Date;
   reason: string;
   createdAt: Date;
   updatedAt: Date;

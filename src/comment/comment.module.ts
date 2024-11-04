@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommentBanEntity } from './entities/commentBan.entity';
 import { CommentEntity } from './entities/comment.entity';
 import { CommentReplyEntity } from './entities/commentReply.entity';
+import { PostEntity } from 'src/post/entities/post.entity';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { CommentReplyEntity } from './entities/commentReply.entity';
       CommentBanEntity,
       CommentEntity,
       CommentReplyEntity,
+      PostEntity,
     ]),
   ],
   controllers: [CommentController],

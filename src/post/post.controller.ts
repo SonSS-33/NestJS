@@ -30,7 +30,7 @@ export class PostController {
       userId,
       body.title,
       body.content,
-      body.images,
+      body.imageUrl,
     );
   }
 

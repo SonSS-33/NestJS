@@ -37,11 +37,20 @@ export class UserEntity {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @Column({ name: 'created_by', nullable: true })
+  createdBy: number;
+
+  @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @Column({ name: 'updated_by', nullable: true })
+  updatedBy: number;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt: Date;
+
+  @Column({ name: 'deleted_by', nullable: true })
+  deletedBy: number;
 
   @OneToOne(() => UserDetailEntity, (userDetail) => userDetail.user, {
     cascade: true,

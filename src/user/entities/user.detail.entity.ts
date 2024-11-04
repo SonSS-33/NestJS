@@ -32,12 +32,21 @@ export class UserDetailEntity {
   @Column()
   bio: string;
 
-  @CreateDateColumn()
-  created_at: Date;
+  @CreateDateColumn({ name: 'created_at' })
+  createdAt: Date;
 
-  @UpdateDateColumn()
-  updated_at: Date;
+  @Column({ name: 'created_by', nullable: true })
+  createdBy: number;
 
-  @DeleteDateColumn()
-  deleted_at: Date;
+  @UpdateDateColumn({ name: 'updated_at', nullable: true })
+  updatedAt: Date;
+
+  @Column({ name: 'updated_by', nullable: true })
+  updatedBy: number;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt: Date;
+
+  @Column({ name: 'deleted_by', nullable: true })
+  deletedBy: number;
 }

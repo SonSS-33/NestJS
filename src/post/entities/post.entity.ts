@@ -30,16 +30,16 @@ export class PostEntity {
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @Column({ name: 'created_by' })
+  @Column({ name: 'created_by', nullable: true })
   createdBy: number;
 
-  @UpdateDateColumn({ name: ' updated_at' })
+  @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt: Date;
 
-  @Column({ name: ' updated_by', nullable: true })
+  @Column({ name: 'updated_by', nullable: true })
   updatedBy: number;
 
-  @DeleteDateColumn({ name: 'deleted_at' })
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt: Date;
 
   @Column({ name: 'deleted_by', nullable: true })

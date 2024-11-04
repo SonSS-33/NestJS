@@ -46,11 +46,11 @@ export class GetUserDetailParamsDto {
   userId: number;
 }
 
-export class UpdateByAdminParamsDto {
-  @Type(() => Number)
-  @IsNumber()
-  userId: number;
-}
+// export class UpdateByAdminParamsDto {
+//   @Type(() => Number)
+//   @IsNumber()
+//   userId: number;
+// }
 
 export class DeleteUserParamsDto {
   @Type(() => Number)

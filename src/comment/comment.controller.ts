@@ -2,151 +2,154 @@ import {
   Controller,
   Post,
   Body,
-  Req,
-  Put,
-  Param,
-  Delete,
   Get,
+  Param,
+  Put,
+  Req,
+  Delete,
+  ForbiddenException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
-
-import { Public } from 'src/auth/decorators/public.decorator';
 import {
-  CreateCommentBanBodyDto,
   CreateCommentBodyDto,
   CreateCommentReplyBodyDto,
   DeleteCommentParamDto,
-  GetCommentBanParamDto,
   GetCommentParamDto,
   GetCommentReplyParamDto,
-  UpdateCommentBanBodyDto,
   UpdateCommentBodyDto,
   UpdateCommentReplyBodyDto,
 } from './dtos/comment.dto';
 
-@Controller('api/v1/comments')
+@Controller('api/v1/comment')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
-
-  @Public()
-  @Get(':postId/getAll')
-  async getAllComment(@Param('postId') postId: number) {
-    return await this.commentService.findAllComments(postId);
-  }
 
   @Post('create')
   async createComment(@Body() body: CreateCommentBodyDto, @Req() req: any) {
     const userId = req.user.userId;
     return await this.commentService.createComment(
       userId,
-      body.content,
       body.postId,
+      body.content,
+      body.imageUrl,
     );
+  }
+
+  @Get(':commentId/detail')
+  async findComment(@Param() params: GetCommentParamDto) {
+    const comment = await this.commentService.getComment(params.commentId);
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+    return comment;
   }
 
   @Put(':commentId/update')
   async updateComment(
-    @Param() params: GetCommentParamDto,
+    @Param() param: GetCommentParamDto,
     @Body() body: UpdateCommentBodyDto,
     @Req() req: any,
   ) {
+    const commentId = param.commentId;
     const userId = req.user.userId;
-    const updatedComment = await this.commentService.updateComment(
-      params.commentId,
-      body,
+
+    const comment = await this.commentService.getComment(commentId);
+    if (!comment) {
+      throw new NotFoundException('Comment not found');
+    }
+
+    if (comment.user.id !== userId) {
+      throw new ForbiddenException('You can only update your own comment');
+    }
+
+    return await this.commentService.updateComment(
+      commentId,
+      body.content,
+      body.imageUrl,
       userId,
     );
-
-    return {
-      data: updatedComment,
-    };
   }
 
   @Delete(':commentId/delete')
-  async deleteComment(@Param() param: DeleteCommentParamDto, @Req() req: any) {
+  async deleteComment(
+    @Param() param: DeleteCommentParamDto,
+    @Req() req: any,
+  ): Promise<boolean> {
     const userId = req.user.userId;
-    await this.commentService.deleteComment(param.commentId, userId);
-    return {
-      message: 'Comment deleted successfully',
-    };
+    const comment = await this.commentService.getComment(param.commentId);
+
+    if (!comment || comment.user.id !== userId) {
+      throw new ForbiddenException('You can only delete your own comment');
+    }
+
+    return await this.commentService.deleteComment(param.commentId, userId);
   }
 
-  @Post(':commentId/reply')
+  // Comment Reply CRUD methods
+  @Post(':commentId/reply/create')
   async createCommentReply(
     @Param() params: GetCommentReplyParamDto,
     @Body() body: CreateCommentReplyBodyDto,
     @Req() req: any,
   ) {
     const userId = req.user.userId;
-    const reply = await this.commentService.createCommentReply(
+    return await this.commentService.createCommentReply(
       userId,
-      params.commentReplyId,
-      body,
+      params.commentId,
+      body.content,
     );
-    return {
-      message: 'Reply created successfully',
-      data: reply,
-    };
   }
 
-  // Phương thức cập nhật phản hồi bình luận
-  @Put(':replyId/updateReply')
+  @Get(':commentId/reply/:replyId/detail')
+  async findCommentReply(@Param() param: GetCommentReplyParamDto) {
+    const reply = await this.commentService.getCommentReply(param.commentId);
+    if (!reply) {
+      throw new NotFoundException('Comment reply not found');
+    }
+    return reply;
+  }
+
+  @Put(':commentId/reply/:replyId/update')
   async updateCommentReply(
-    @Param() params: GetCommentReplyParamDto,
+    @Param() param: GetCommentReplyParamDto,
     @Body() body: UpdateCommentReplyBodyDto,
     @Req() req: any,
   ) {
+    const replyId = param.commentId;
     const userId = req.user.userId;
-    const updatedReply = await this.commentService.updateCommentReply(
-      params.commentReplyId, // Đảm bảo tham số trùng với tên tham số trong DTO
-      body,
+
+    const reply = await this.commentService.getCommentReply(replyId);
+    if (!reply) {
+      throw new NotFoundException('Comment reply not found');
+    }
+
+    if (reply.user.id !== userId) {
+      throw new ForbiddenException('You can only update your own reply');
+    }
+
+    return await this.commentService.updateCommentReply(
+      replyId,
+      body.content,
       userId,
     );
-
-    return {
-      message: 'Reply updated successfully',
-      data: updatedReply,
-    };
   }
 
-  @Delete(':replyId/deleteReply')
-  async deleteCommentReply(@Param('replyId') replyId: number, @Req() req: any) {
+  @Delete(':commentId/reply/:replyId/delete')
+  async deleteCommentReply(
+    @Param() param: GetCommentReplyParamDto,
+    @Req() req: any,
+  ): Promise<boolean> {
     const userId = req.user.userId;
-    await this.commentService.deleteCommentReply(replyId, userId);
+    const reply = await this.commentService.getCommentReply(param.commentId);
 
-    return {
-      message: 'Reply deleted successfully',
-    };
-  }
+    if (!reply || reply.user.id !== userId) {
+      throw new ForbiddenException('You can only delete your own reply');
+    }
 
-  // Phương thức cho comment ban
-  @Post('ban')
-  async createCommentBan(@Body() body: CreateCommentBanBodyDto) {
-    return await this.commentService.createCommentBan(body);
-  }
-
-  @Put(':banId/updateBan')
-  async updateCommentBan(
-    @Param() params: GetCommentBanParamDto,
-    @Body() body: UpdateCommentBanBodyDto,
-  ) {
-    const updatedBan = await this.commentService.updateCommentBan(
-      params.commentBanId,
-      body,
+    return await this.commentService.deleteCommentReply(
+      param.commentId,
+      userId,
     );
-
-    return {
-      message: 'Ban updated successfully',
-      data: updatedBan,
-    };
-  }
-
-  @Delete(':banId/deleteBan')
-  async deleteCommentBan(@Param('banId') banId: number) {
-    await this.commentService.deleteCommentBan(banId);
-
-    return {
-      message: 'Ban deleted successfully',
-    };
   }
 }

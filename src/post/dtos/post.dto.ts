@@ -18,7 +18,7 @@ export class CreatePostBodyDto {
   @IsArray()
   @IsOptional()
   @IsUrl({}, { each: true })
-  images?: string[];
+  imageUrl?: string[];
 }
 
 export class UpdatePostBodyDto {
@@ -33,13 +33,13 @@ export class UpdatePostBodyDto {
   @IsArray()
   @IsOptional()
   @IsUrl({}, { each: true })
-  images?: string[];
+  imageUrl?: string[];
 }
 
 export class PostImageDto {
   @IsString()
   @IsNotEmpty()
-  image_url: string;
+  imageUrl: string;
 }
 
 export class GetPostParamsDto {

@@ -33,16 +33,23 @@ export class UserService {
       password: hashedPassword,
       isActive: true,
       role,
-      userDetail: {
-        first_name: firstName,
-        last_name: lastName,
-        date_of_birth: dateOfBirth,
-        address,
-        bio,
-      },
     });
 
-    return await this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(user);
+
+    const userDetail = this.userDetailRepository.create({
+      first_name: firstName,
+      last_name: lastName,
+      date_of_birth: dateOfBirth,
+      address,
+      bio,
+      user: savedUser,
+    });
+
+    await this.userDetailRepository.save(userDetail);
+
+    delete savedUser.password;
+    return savedUser;
   }
 
   async findAll(

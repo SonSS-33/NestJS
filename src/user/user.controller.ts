@@ -14,7 +14,7 @@ import {
   RegisterUserBodyDto,
   DeleteUserParamsDto,
   UpdateByAdminBodyDto,
-  UpdateByAdminParamsDto,
+  //UpdateByAdminParamsDto,
   UpdateUserBodyDto,
   GetUserDetailParamsDto,
 } from './dto/user.dto';
@@ -52,7 +52,7 @@ export class UserController {
   @Roles(RoleType.ADMIN)
   @Put(':userId/update')
   async updateByAdmin(
-    @Param() params: UpdateByAdminParamsDto,
+    @Param() params: GetUserDetailParamsDto,
     @Body() body: UpdateByAdminBodyDto,
   ) {
     const user = await this.userService.getUser(params.userId, true);

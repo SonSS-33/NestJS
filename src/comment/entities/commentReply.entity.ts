@@ -4,6 +4,9 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { CommentEntity } from './comment.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
@@ -24,19 +27,19 @@ export class CommentReplyEntity {
   @Column('text')
   content: string;
 
-  @Column({ name: 'created_at' })
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @Column({ name: 'created_by', nullable: true })
   createdBy: number;
 
-  @Column({ name: 'updated_at', nullable: true })
+  @UpdateDateColumn({ name: 'updated_at', nullable: true })
   updatedAt: Date;
 
   @Column({ name: 'updated_by', nullable: true })
   updatedBy: number;
 
-  @Column({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt: Date;
 
   @Column({ name: 'deleted_by', nullable: true })

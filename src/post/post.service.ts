@@ -23,6 +23,7 @@ export class PostService {
       user: { id: userId },
       title,
       content,
+      createdAt: new Date(),
       createdBy: userId,
     });
 
@@ -50,7 +51,7 @@ export class PostService {
         id: postId,
         deletedAt: IsNull(),
       },
-      relations: ['user'],
+      relations: ['user', 'images'],
     });
   }
 

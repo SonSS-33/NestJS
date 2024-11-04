@@ -1,17 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { CommentEntity } from './entities/comment.entity';
-import { CommentReplyEntity } from './entities/commentReply.entity';
-import { CommentBanEntity } from './entities/commentBan.entity';
-
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import {
-  CreateCommentBanBodyDto,
-  CreateCommentReplyBodyDto,
-  UpdateCommentBanBodyDto,
-  UpdateCommentBodyDto,
-  UpdateCommentReplyBodyDto,
-} from './dtos/comment.dto';
+import { CommentEntity } from './entities/comment.entity';
+import { UpdateCommentBodyDto } from './dtos/comment.dto';
+import { CommentReplyEntity } from './entities/commentReply.entity';
+import { PostEntity } from 'src/post/entities/post.entity';
+//import { CommentResponseDto } from './dtos/comment.dto';
 
 @Injectable()
 export class CommentService {
@@ -20,140 +14,124 @@ export class CommentService {
     private readonly commentRepository: Repository<CommentEntity>,
     @InjectRepository(CommentReplyEntity)
     private readonly commentReplyRepository: Repository<CommentReplyEntity>,
-    @InjectRepository(CommentBanEntity)
-    private readonly commentBanRepository: Repository<CommentBanEntity>,
+    @InjectRepository(PostEntity)
+    private readonly postRepository: Repository<PostEntity>,
   ) {}
-
-  async findAllComments(postId: number): Promise<CommentEntity[]> {
-    return this.commentRepository.find({
-      where: { post: { id: postId } },
-      relations: ['user'],
-    });
-  }
 
   async createComment(
     userId: number,
-    content: string,
     postId: number,
+    content: string,
+    imageUrl?: string,
   ): Promise<CommentEntity> {
-    const comment = this.commentRepository.create({
-      user: { id: userId },
-      content,
-      createdBy: userId,
-      post: { id: postId },
-      createdAt: new Date(),
+    const post = await this.postRepository.findOne({
+      where: { id: postId, deletedAt: null },
     });
-    return this.commentRepository.save(comment);
+    if (!post) {
+      throw new NotFoundException('Post not found or has been deleted');
+    }
+    const newComment = this.commentRepository.create({
+      user: { id: userId },
+      post: { id: postId },
+      content,
+      imageUrl,
+      createdAt: new Date(),
+      createdBy: userId,
+    });
+    return await this.commentRepository.save(newComment);
+  }
+
+  async getComment(commentId: number): Promise<CommentEntity> {
+    return await this.commentRepository.findOne({
+      where: { id: commentId },
+      relations: ['user'],
+    });
   }
 
   async updateComment(
     commentId: number,
-    body: UpdateCommentBodyDto,
+    content: string,
+    imageUrl: string | undefined,
     userId: number,
-  ): Promise<CommentEntity> {
-    const comment = await this.commentRepository.findOne({
-      where: { id: commentId },
-      relations: ['user'],
-    });
-    if (comment.user.id !== userId) {
-      throw new ForbiddenException(
-        'You do not have permission to update this comment',
-      );
-    }
+  ): Promise<UpdateCommentBodyDto> {
+    const comment = await this.getComment(commentId);
+    if (!comment) throw new NotFoundException('Comment not found');
 
-    Object.assign(comment, body, {
-      updatedBy: userId,
+    await this.commentRepository.update(commentId, {
+      content,
+      imageUrl,
       updatedAt: new Date(),
+      updatedBy: userId,
     });
 
-    return this.commentRepository.save(comment);
+    return await this.getComment(commentId);
   }
 
-  async deleteComment(commentId: number, userId: number): Promise<void> {
-    const comment = await this.commentRepository.findOne({
-      where: { id: commentId },
+  async deleteComment(commentId: number, userId: number): Promise<boolean> {
+    const comment = await this.getComment(commentId);
+    if (!comment) throw new NotFoundException('Comment not found');
+
+    await this.commentRepository.update(commentId, {
+      deletedAt: new Date(),
+      deletedBy: userId,
     });
-    comment.deletedAt = new Date();
-    comment.deletedBy = userId;
-    await this.commentRepository.save(comment);
+
+    return true;
   }
 
-  // Phương thức cho comment reply
+  // Comment Reply CRUD methods
   async createCommentReply(
     userId: number,
     commentId: number,
-    body: CreateCommentReplyBodyDto,
+    content: string,
   ): Promise<CommentReplyEntity> {
-    const reply = this.commentReplyRepository.create({
-      user: { id: userId }, // Liên kết với người dùng
-      content: body.content,
-      createdBy: userId,
-      comment: { id: commentId }, // Liên kết với bình luận cha
-      createdAt: new Date(),
+    const comment = await this.commentRepository.findOne({
+      where: { id: commentId },
     });
-    return this.commentReplyRepository.save(reply);
+    if (!comment) throw new NotFoundException('Comment not found');
+
+    const newReply = this.commentReplyRepository.create({
+      comment,
+      content,
+      createdAt: new Date(),
+      createdBy: userId,
+    });
+    return await this.commentReplyRepository.save(newReply);
+  }
+
+  async getCommentReply(replyId: number): Promise<CommentReplyEntity> {
+    return await this.commentReplyRepository.findOne({
+      where: { id: replyId },
+      relations: ['user', 'comment'],
+    });
   }
 
   async updateCommentReply(
     replyId: number,
-    body: UpdateCommentReplyBodyDto,
+    content: string,
     userId: number,
   ): Promise<CommentReplyEntity> {
-    const reply = await this.commentReplyRepository.findOne({
-      where: { id: replyId },
-    });
-    if (reply.createdBy !== userId) {
-      throw new ForbiddenException(
-        'You do not have permission to update this reply',
-      );
-    }
+    const reply = await this.getCommentReply(replyId);
+    if (!reply) throw new NotFoundException('Comment reply not found');
 
-    Object.assign(reply, body, {
+    await this.commentReplyRepository.update(replyId, {
+      content,
+      updatedAt: new Date(),
       updatedBy: userId,
-      updatedAt: new Date(),
     });
 
-    return this.commentReplyRepository.save(reply);
+    return await this.getCommentReply(replyId);
   }
 
-  async deleteCommentReply(replyId: number, userId: number): Promise<void> {
-    const reply = await this.commentReplyRepository.findOne({
-      where: { id: replyId },
-    });
-    reply.deletedAt = new Date();
-    reply.deletedBy = userId;
-    await this.commentReplyRepository.save(reply);
-  }
+  async deleteCommentReply(replyId: number, userId: number): Promise<boolean> {
+    const reply = await this.getCommentReply(replyId);
+    if (!reply) throw new NotFoundException('Comment reply not found');
 
-  // Phương thức cho comment ban
-  async createCommentBan(
-    createCommentBanDto: CreateCommentBanBodyDto,
-  ): Promise<CommentBanEntity> {
-    const commentBan = this.commentBanRepository.create({
-      ...createCommentBanDto,
-      createdAt: new Date(),
-    });
-    return this.commentBanRepository.save(commentBan);
-  }
-
-  async updateCommentBan(
-    banId: number,
-    updateCommentBanDto: UpdateCommentBanBodyDto,
-  ): Promise<CommentBanEntity> {
-    const commentBan = await this.commentBanRepository.findOne({
-      where: { id: banId },
-    });
-    Object.assign(commentBan, updateCommentBanDto, {
-      updatedAt: new Date(),
+    await this.commentReplyRepository.update(replyId, {
+      deletedAt: new Date(),
+      deletedBy: userId,
     });
 
-    return this.commentBanRepository.save(commentBan);
-  }
-
-  async deleteCommentBan(banId: number): Promise<void> {
-    const commentBan = await this.commentBanRepository.findOne({
-      where: { id: banId },
-    });
-    await this.commentBanRepository.remove(commentBan);
+    return true;
   }
 }
