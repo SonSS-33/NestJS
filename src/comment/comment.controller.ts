@@ -46,11 +46,11 @@ export class CommentController {
 
   @Put(':commentId/update')
   async updateComment(
-    @Param() param: GetCommentParamDto,
+    @Param() params: GetCommentParamDto,
     @Body() body: UpdateCommentBodyDto,
     @Req() req: any,
   ) {
-    const commentId = param.commentId;
+    const commentId = params.commentId;
     const userId = req.user.userId;
 
     return await this.commentService.updateComment(
@@ -63,12 +63,12 @@ export class CommentController {
 
   @Delete(':commentId/delete')
   async deleteComment(
-    @Param() param: DeleteCommentParamDto,
+    @Param() params: DeleteCommentParamDto,
     @Req() req: any,
   ): Promise<boolean> {
     const userId = req.user.userId;
 
-    return await this.commentService.deleteComment(param.commentId, userId);
+    return await this.commentService.deleteComment(params.commentId, userId);
   }
 
   // Comment Reply
@@ -79,12 +79,11 @@ export class CommentController {
     @Req() req: any,
   ) {
     const userId = req.user.userId;
-    const newReply = await this.commentService.createCommentReply(
+    return await this.commentService.createCommentReply(
       userId,
       params.commentId,
       body.content,
     );
-    return newReply;
   }
 
   @Get(':commentId/reply/:replyId/detail')
@@ -144,10 +143,6 @@ export class CommentController {
   @Get(':commentBanId/detail')
   async getCommentBan(@Param() params: GetCommentBanParamDto) {
     return await this.commentService.getCommentBan(params.commentBanId);
-    // if (!commentBan) {
-    //   throw new NotFoundException('Comment ban not found');
-    // }
-    // return commentBan;
   }
 
   @Put(':commentBanId/update')

@@ -11,7 +11,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-//import { Public } from 'src/auth/decorators/public.decorator';
+
 import {
   CreatePostBodyDto,
   DeletePostParamsDto,
