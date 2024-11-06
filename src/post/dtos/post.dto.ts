@@ -1,9 +1,11 @@
+import { Type } from 'class-transformer';
 import {
   IsString,
   IsNotEmpty,
   IsOptional,
   IsArray,
   IsUrl,
+  IsNumber,
 } from 'class-validator';
 
 export class CreatePostBodyDto {
@@ -36,18 +38,14 @@ export class UpdatePostBodyDto {
   imageUrl?: string[];
 }
 
-export class PostImageDto {
-  @IsString()
-  @IsNotEmpty()
-  imageUrl: string;
-}
-
 export class GetPostParamsDto {
-  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
   postId: number;
 }
 
 export class DeletePostParamsDto {
-  @IsNotEmpty()
+  @Type(() => Number)
+  @IsNumber()
   postId: number;
 }

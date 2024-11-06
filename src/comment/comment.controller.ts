@@ -12,14 +12,18 @@ import {
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import {
+  CreateCommentBanBodyDto,
   CreateCommentBodyDto,
   CreateCommentReplyBodyDto,
   DeleteCommentParamDto,
+  GetCommentBanParamDto,
   GetCommentParamDto,
   GetCommentReplyParamDto,
+  UpdateCommentBanBodyDto,
   UpdateCommentBodyDto,
   UpdateCommentReplyBodyDto,
 } from './dtos/comment.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('api/v1/comment')
 export class CommentController {
@@ -35,14 +39,10 @@ export class CommentController {
       body.imageUrl,
     );
   }
-
+  @Public()
   @Get(':commentId/detail')
   async findComment(@Param() params: GetCommentParamDto) {
-    const comment = await this.commentService.getComment(params.commentId);
-    if (!comment) {
-      throw new NotFoundException('Comment not found');
-    }
-    return comment;
+    return await this.commentService.getComment(params.commentId);
   }
 
   @Put(':commentId/update')
@@ -53,15 +53,6 @@ export class CommentController {
   ) {
     const commentId = param.commentId;
     const userId = req.user.userId;
-
-    const comment = await this.commentService.getComment(commentId);
-    if (!comment) {
-      throw new NotFoundException('Comment not found');
-    }
-
-    if (comment.user.id !== userId) {
-      throw new ForbiddenException('You can only update your own comment');
-    }
 
     return await this.commentService.updateComment(
       commentId,
@@ -77,16 +68,11 @@ export class CommentController {
     @Req() req: any,
   ): Promise<boolean> {
     const userId = req.user.userId;
-    const comment = await this.commentService.getComment(param.commentId);
-
-    if (!comment || comment.user.id !== userId) {
-      throw new ForbiddenException('You can only delete your own comment');
-    }
 
     return await this.commentService.deleteComment(param.commentId, userId);
   }
 
-  // Comment Reply CRUD methods
+  // Comment Reply
   @Post(':commentId/reply/create')
   async createCommentReply(
     @Param() params: GetCommentParamDto,
@@ -142,6 +128,58 @@ export class CommentController {
     return await this.commentService.deleteCommentReply(
       param.commentId,
       userId,
+    );
+  }
+  // Comment Ban
+  @Post('ban/create')
+  async createCommentBan(
+    @Body() body: CreateCommentBanBodyDto,
+    @Req() req: any,
+  ) {
+    const createdBy = req.user.userId;
+    return await this.commentService.createCommentBan(
+      body.userId,
+      body.bannedUntil,
+      body.reason,
+      createdBy,
+    );
+  }
+
+  @Get(':commentBanId/detail')
+  async getCommentBan(@Param() param: GetCommentBanParamDto) {
+    const commentBan = await this.commentService.getCommentBan(
+      param.commentBanId,
+    );
+    if (!commentBan) {
+      throw new NotFoundException('Comment ban not found');
+    }
+    return commentBan;
+  }
+
+  @Put(':commentBanId/update')
+  async updateCommentBan(
+    @Param() param: GetCommentBanParamDto,
+    @Body() body: UpdateCommentBanBodyDto,
+    @Req() req: any,
+  ) {
+    const updatedBy = req.user.userId; // Lấy user ID từ request
+    return await this.commentService.updateCommentBan(
+      param.commentBanId,
+      body.bannedUntil,
+      body.reason,
+      updatedBy,
+    );
+  }
+
+  @Delete(':commentBanId/delete')
+  async deleteCommentBan(
+    @Param() param: GetCommentBanParamDto,
+    @Req() req: any,
+  ) {
+    const deletedBy = req.user.userId; // Lấy user ID từ request
+    return await this.commentService.deleteCommentBan(
+      param.commentBanId,
+      deletedBy,
     );
   }
 }

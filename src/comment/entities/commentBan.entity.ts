@@ -9,6 +9,7 @@ import {
   DeleteDateColumn,
 } from 'typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
+import { PostEntity } from 'src/post/entities/post.entity';
 
 @Entity('comment_ban')
 export class CommentBanEntity {
@@ -18,6 +19,10 @@ export class CommentBanEntity {
   @ManyToOne(() => UserEntity, (user) => user.id)
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
+
+  @ManyToOne(() => PostEntity, (post) => post.id)
+  @JoinColumn({ name: 'post_id' })
+  post: PostEntity;
 
   @Column({ name: 'banned_until', type: 'timestamp' })
   bannedUntil: Date;

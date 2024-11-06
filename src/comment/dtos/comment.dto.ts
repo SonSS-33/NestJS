@@ -54,11 +54,11 @@ export class UpdateCommentBodyDto {
 // DTO cho Comment Reply
 export class GetCommentReplyParamDto {
   @Type(() => Number)
-  @IsInt()
+  @IsNumber()
   commentId: number;
 
   @Type(() => Number)
-  @IsInt()
+  @IsNumber()
   replyId: number;
 }
 export class CreateCommentReplyBodyDto {
@@ -82,7 +82,7 @@ export class GetCommentBanParamDto {
 }
 export class CreateCommentBanBodyDto {
   @IsNotEmpty()
-  @IsInt()
+  @IsNumber()
   userId: number;
 
   @IsNotEmpty()
@@ -102,14 +102,4 @@ export class UpdateCommentBanBodyDto {
   @IsOptional()
   @IsString()
   reason?: string;
-}
-
-export class CommentBanResponseDto {
-  id: number;
-  userId: number;
-  bannedUntil: Date;
-  reason: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }

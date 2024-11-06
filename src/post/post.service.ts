@@ -31,18 +31,18 @@ export class PostService {
 
     if (images && images.length > 0) {
       const postImages = images.map((imageUrl) => {
-        const postImage = this.postImageRepository.create({
+        return this.postImageRepository.create({
           post: savedPost,
           imageUrl: imageUrl,
           createdBy: userId,
         });
-        return postImage;
       });
 
       await this.postImageRepository.save(postImages);
     }
 
-    return savedPost;
+    const postWithImages = await this.getPost(savedPost.id);
+    return postWithImages;
   }
 
   async getPost(postId: number) {
@@ -65,6 +65,7 @@ export class PostService {
       title: title,
       content: content,
       updatedBy: userId,
+      updatedAt: new Date(),
     };
 
     await this.postRepository.update(

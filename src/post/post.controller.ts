@@ -18,6 +18,7 @@ import {
   GetPostParamsDto,
   UpdatePostBodyDto,
 } from './dtos/post.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('api/v1/post')
 export class PostController {
@@ -34,12 +35,7 @@ export class PostController {
     );
   }
 
-  // @Public()
-  // @Get('all')
-  // async findPosts() {
-  //   return await this.postService.findAllPosts();
-  // }
-
+  @Public()
   @Get(':postId/detail')
   async findPost(@Param() params: GetPostParamsDto) {
     return await this.postService.getPost(params.postId);
