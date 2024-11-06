@@ -8,7 +8,6 @@ import {
   Req,
   Delete,
   ForbiddenException,
-  NotFoundException,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import {
@@ -89,12 +88,8 @@ export class CommentController {
   }
 
   @Get(':commentId/reply/:replyId/detail')
-  async findCommentReply(@Param() param: GetCommentReplyParamDto) {
-    const reply = await this.commentService.getCommentReply(param.commentId);
-    if (!reply) {
-      throw new NotFoundException('Comment reply not found');
-    }
-    return reply;
+  async findCommentReply(@Param() params: GetCommentReplyParamDto) {
+    return await this.commentService.getCommentReply(params.commentId);
   }
 
   @Put(':commentId/reply/:replyId/update')
@@ -115,18 +110,18 @@ export class CommentController {
 
   @Delete(':commentId/reply/:replyId/delete')
   async deleteCommentReply(
-    @Param() param: GetCommentReplyParamDto,
+    @Param() params: GetCommentReplyParamDto,
     @Req() req: any,
   ): Promise<boolean> {
     const userId = req.user.userId;
-    const reply = await this.commentService.getCommentReply(param.commentId);
+    const reply = await this.commentService.getCommentReply(params.commentId);
 
     if (!reply || reply.user.id !== userId) {
       throw new ForbiddenException('You can only delete your own reply');
     }
 
     return await this.commentService.deleteCommentReply(
-      param.commentId,
+      params.commentId,
       userId,
     );
   }
@@ -139,6 +134,7 @@ export class CommentController {
     const createdBy = req.user.userId;
     return await this.commentService.createCommentBan(
       body.userId,
+      body.postId,
       body.bannedUntil,
       body.reason,
       createdBy,
@@ -146,14 +142,12 @@ export class CommentController {
   }
 
   @Get(':commentBanId/detail')
-  async getCommentBan(@Param() param: GetCommentBanParamDto) {
-    const commentBan = await this.commentService.getCommentBan(
-      param.commentBanId,
-    );
-    if (!commentBan) {
-      throw new NotFoundException('Comment ban not found');
-    }
-    return commentBan;
+  async getCommentBan(@Param() params: GetCommentBanParamDto) {
+    return await this.commentService.getCommentBan(params.commentBanId);
+    // if (!commentBan) {
+    //   throw new NotFoundException('Comment ban not found');
+    // }
+    // return commentBan;
   }
 
   @Put(':commentBanId/update')
@@ -173,12 +167,12 @@ export class CommentController {
 
   @Delete(':commentBanId/delete')
   async deleteCommentBan(
-    @Param() param: GetCommentBanParamDto,
+    @Param() params: GetCommentBanParamDto,
     @Req() req: any,
   ) {
     const deletedBy = req.user.userId;
     return await this.commentService.deleteCommentBan(
-      param.commentBanId,
+      params.commentBanId,
       deletedBy,
     );
   }

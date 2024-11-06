@@ -153,7 +153,7 @@ export class CommentService {
 
   async getCommentReply(replyId: number): Promise<CommentReplyEntity> {
     return await this.commentReplyRepository.findOne({
-      where: { id: replyId },
+      where: { id: replyId, deletedAt: IsNull() },
       relations: ['user', 'comment'],
     });
   }
@@ -198,12 +198,14 @@ export class CommentService {
   //Comment
   async createCommentBan(
     userId: number,
+    postId: number,
     bannedUntil: Date,
     reason: string,
     createdBy: number,
   ): Promise<CommentBanEntity> {
     const newCommentBan = this.commentBanRepository.create({
       user: { id: userId },
+      post: { id: postId },
       bannedUntil,
       reason,
       createdAt: new Date(),

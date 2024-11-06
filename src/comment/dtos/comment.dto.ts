@@ -86,6 +86,10 @@ export class CreateCommentBanBodyDto {
   userId: number;
 
   @IsNotEmpty()
+  @IsNumber()
+  postId: number;
+
+  @IsNotEmpty()
   @IsDateString()
   bannedUntil: Date;
 
