@@ -30,7 +30,6 @@ export class CommentService {
     content: string,
     imageUrl?: string,
   ): Promise<CommentEntity> {
-    // Tìm bài viết
     const post = await this.postRepository.findOne({
       where: { id: postId, deletedAt: IsNull() },
       relations: ['user'],

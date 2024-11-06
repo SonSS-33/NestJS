@@ -162,7 +162,7 @@ export class CommentController {
     @Body() body: UpdateCommentBanBodyDto,
     @Req() req: any,
   ) {
-    const updatedBy = req.user.userId; // Lấy user ID từ request
+    const updatedBy = req.user.userId;
     return await this.commentService.updateCommentBan(
       param.commentBanId,
       body.bannedUntil,
@@ -176,7 +176,7 @@ export class CommentController {
     @Param() param: GetCommentBanParamDto,
     @Req() req: any,
   ) {
-    const deletedBy = req.user.userId; // Lấy user ID từ request
+    const deletedBy = req.user.userId;
     return await this.commentService.deleteCommentBan(
       param.commentBanId,
       deletedBy,
