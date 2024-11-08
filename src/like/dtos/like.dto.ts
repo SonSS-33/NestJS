@@ -4,13 +4,13 @@ import { IsOptional, IsNumber } from 'class-validator';
 export class CreatePostLikeDto {
   @Type(() => Number)
   @IsNumber()
-  userId: number;
+  postId: number;
 }
 
 export class DeletePostLikeDto {
   @Type(() => Number)
   @IsNumber()
-  userId: number;
+  postId: number;
 
   @IsOptional()
   @IsNumber()
@@ -20,13 +20,13 @@ export class DeletePostLikeDto {
 export class CreateCommentLikeDto {
   @Type(() => Number)
   @IsNumber()
-  userId: number;
+  commentId: number;
 }
 
 export class DeleteCommentLikeDto {
   @Type(() => Number)
   @IsNumber()
-  userId: number;
+  commentId: number;
 
   @IsOptional()
   @IsNumber()

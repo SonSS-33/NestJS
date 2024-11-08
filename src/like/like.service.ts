@@ -58,7 +58,7 @@ export class LikeService {
     if (!like) {
       throw new NotFoundException('Like not found for this post');
     }
-    await this.postLikeRepository.save(like);
+    await this.postLikeRepository.remove(like);
 
     const post = await this.postRepository.findOne({ where: { id: postId } });
     if (post) {
@@ -97,10 +97,12 @@ export class LikeService {
     const like = await this.commentLikeRepository.findOne({
       where: { comment: { id: commentId }, user: { id: userId } },
     });
+
     if (!like) {
       throw new NotFoundException('Like not found for this comment');
     }
-    await this.commentLikeRepository.save(like);
+
+    await this.commentLikeRepository.remove(like);
 
     const comment = await this.commentRepository.findOne({
       where: { id: commentId },
