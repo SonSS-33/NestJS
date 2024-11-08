@@ -7,8 +7,6 @@ import {
   Put,
   Req,
   Delete,
-  ForbiddenException,
-  NotFoundException,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 
@@ -19,6 +17,8 @@ import {
   UpdatePostBodyDto,
 } from './dtos/post.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { RoleType } from 'src/user/enums/role.type';
+import { Roles } from 'src/guards/roles.decorator';
 
 @Controller('api/v1/post')
 export class PostController {
@@ -41,41 +41,44 @@ export class PostController {
     return await this.postService.getPost(params.postId);
   }
 
+  @Roles(RoleType.ADMIN)
   @Put(':postId/update')
-  async updatePost(
-    @Param() param: GetPostParamsDto,
+  async updateByAdmin(
+    @Param() params: GetPostParamsDto,
     @Body() body: UpdatePostBodyDto,
     @Req() req: any,
   ) {
-    const postId = param.postId;
+    const postId = params.postId;
     const userId = req.user.userId;
 
-    const post = await this.postService.getPost(postId);
-
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
-    if (post.user.id !== userId) {
-      throw new ForbiddenException('You can only update your own post');
-    }
-
     return await this.postService.updatePost(
-      post,
+      postId,
+      userId,
       body.title,
       body.content,
-      userId,
     );
   }
 
-  @Delete(':postId/delete')
-  async deletePost(@Param() param: DeletePostParamsDto, @Req() req: any) {
+  @Put('update')
+  async updatePost(
+    @Param() params: GetPostParamsDto,
+    @Body() body: UpdatePostBodyDto,
+    @Req() req: any,
+  ) {
+    const postId = params.postId;
     const userId = req.user.userId;
-    const post = await this.postService.getPost(param.postId);
-    if (!post || post.user.id !== userId) {
-      throw new ForbiddenException('You can only delete your own post');
-    }
 
-    return await this.postService.deletePost(post, userId);
+    return await this.postService.updatePost(
+      postId,
+      userId,
+      body.title,
+      body.content,
+    );
+  }
+  @Roles(RoleType.ADMIN)
+  @Delete(':postId/delete')
+  async deletePost(@Param() params: DeletePostParamsDto, @Req() req: any) {
+    const userId = req.user.userId;
+    return await this.postService.deletePost(params.postId, userId);
   }
 }

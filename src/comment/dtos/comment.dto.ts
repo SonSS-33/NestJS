@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsString,
   IsOptional,
-  IsInt,
   IsDateString,
   IsNumber,
   IsUrl,
@@ -32,13 +31,13 @@ export class CreateCommentBodyDto {
   imageUrl?: string;
 
   @IsNotEmpty()
-  @IsInt()
   @Type(() => Number)
+  @IsNumber()
   postId: number;
 
   @IsOptional()
-  @IsInt()
   @Type(() => Number)
+  @IsNumber()
   userId?: number;
 }
 

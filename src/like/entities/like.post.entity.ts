@@ -7,22 +7,22 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  OneToMany,
 } from 'typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { PostEntity } from 'src/post/entities/post.entity';
-import { CommentLikeEntity } from 'src/like/entities/like.comment.entity';
 
-@Entity('comment')
-export class CommentEntity {
+@Entity('post_like')
+export class PostLikeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('text')
-  content: string;
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  @JoinColumn({ name: 'user_id' })
+  user: UserEntity;
 
-  @Column({ name: 'image_url', nullable: true })
-  imageUrl: string;
+  @ManyToOne(() => PostEntity, (post) => post.id)
+  @JoinColumn({ name: 'post_id' })
+  post: PostEntity;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
@@ -41,18 +41,4 @@ export class CommentEntity {
 
   @Column({ name: 'deleted_by', nullable: true })
   deletedBy: number;
-
-  @Column({ name: 'like_count', default: 0 })
-  likeCount: number;
-
-  @ManyToOne(() => PostEntity, (post) => post.id)
-  @JoinColumn({ name: 'post_id' })
-  post: PostEntity;
-
-  @ManyToOne(() => UserEntity, (user) => user.id)
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
-
-  @OneToMany(() => CommentLikeEntity, (commentLike) => commentLike.comment)
-  commentLikes: CommentLikeEntity[];
 }

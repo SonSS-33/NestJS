@@ -11,15 +11,12 @@ import {
 } from 'typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { PostImageEntity } from './post.img.entity';
+import { PostLikeEntity } from 'src/like/entities/like.post.entity';
 
 @Entity('post')
 export class PostEntity {
   @PrimaryGeneratedColumn()
   id: number;
-
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
 
   @Column()
   title: string;
@@ -50,4 +47,11 @@ export class PostEntity {
 
   @OneToMany(() => PostImageEntity, (image) => image.post)
   images: PostImageEntity[];
+
+  @ManyToOne(() => UserEntity)
+  @JoinColumn({ name: 'user_id' })
+  user: UserEntity;
+
+  @OneToMany(() => PostLikeEntity, (postLike) => postLike.post)
+  likes: PostLikeEntity[];
 }

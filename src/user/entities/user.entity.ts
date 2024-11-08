@@ -7,11 +7,14 @@ import {
   UpdateDateColumn,
   OneToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { RoleType } from '../enums/role.type';
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 import { UserDetailEntity } from './user.detail.entity';
+import { PostLikeEntity } from 'src/like/entities/like.post.entity';
+import { CommentEntity } from 'src/comment/entities/comment.entity';
 
 @Entity('user')
 export class UserEntity {
@@ -57,4 +60,10 @@ export class UserEntity {
   })
   @JoinColumn()
   userDetail: UserDetailEntity;
+
+  @OneToMany(() => PostLikeEntity, (postLike) => postLike.user)
+  postLikes: PostLikeEntity[];
+
+  @OneToMany(() => CommentEntity, (commentLike) => commentLike.user)
+  commentLikes: CommentEntity[];
 }

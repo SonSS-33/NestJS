@@ -39,7 +39,6 @@ export class CommentService {
       throw new NotFoundException('Post not found or has been deleted');
     }
 
-    // Kiểm tra xem người dùng có phải là chủ sở hữu bài viết không
     if (post.user.id === userId) {
       // Nếu người dùng là chủ sở hữu bài viết, không có giới hạn bình luận
       const newComment = this.commentRepository.create({
@@ -54,7 +53,7 @@ export class CommentService {
       return await this.commentRepository.save(newComment);
     }
 
-    // Kiểm tra xem người dùng có bị ban bình luận trên bài viết này không
+    // Kiểm tra xem người dùng bị cấm hay k
     const banRecord = await this.commentBanRepository.findOne({
       where: {
         user: { id: userId },
@@ -70,7 +69,7 @@ export class CommentService {
       );
     }
 
-    // Nếu không phải là chủ bài viết và không bị cấm, cho phép bình luận
+    // cho phép bình luận nếu k bị cấm
     const newComment = this.commentRepository.create({
       user: { id: userId },
       post: { id: postId },
