@@ -15,6 +15,7 @@ import {
   CreateCommentBodyDto,
   CreateCommentReplyBodyDto,
   DeleteCommentParamDto,
+  DeleteReplyParamDto,
   GetCommentBanParamDto,
   GetCommentParamDto,
   GetCommentReplyParamDto,
@@ -88,7 +89,7 @@ export class CommentController {
 
   @Get(':commentId/reply/:replyId/detail')
   async findCommentReply(@Param() params: GetCommentReplyParamDto) {
-    return await this.commentService.getCommentReply(params.commentId);
+    return await this.commentService.getCommentReply(params.replyId);
   }
 
   @Put(':commentId/reply/:replyId/update')
@@ -97,11 +98,10 @@ export class CommentController {
     @Body() body: UpdateCommentReplyBodyDto,
     @Req() req: any,
   ) {
-    const replyId = params.replyId;
     const userId = req.user.userId;
 
     return await this.commentService.updateCommentReply(
-      replyId,
+      params.replyId,
       body.content,
       userId,
     );
@@ -109,20 +109,17 @@ export class CommentController {
 
   @Delete(':commentId/reply/:replyId/delete')
   async deleteCommentReply(
-    @Param() params: GetCommentReplyParamDto,
+    @Param() params: DeleteReplyParamDto,
     @Req() req: any,
   ): Promise<boolean> {
     const userId = req.user.userId;
-    const reply = await this.commentService.getCommentReply(params.commentId);
+    const reply = await this.commentService.getCommentReply(params.replyId);
 
     if (!reply || reply.user.id !== userId) {
       throw new ForbiddenException('You can only delete your own reply');
     }
 
-    return await this.commentService.deleteCommentReply(
-      params.commentId,
-      userId,
-    );
+    return await this.commentService.deleteCommentReply(params.replyId, userId);
   }
   // Comment Ban
   @Post('ban/create')

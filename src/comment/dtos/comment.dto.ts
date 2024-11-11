@@ -14,12 +14,6 @@ export class GetCommentParamDto {
   commentId: number;
 }
 
-export class DeleteCommentParamDto {
-  @Type(() => Number)
-  @IsNumber()
-  commentId: number;
-}
-
 // DTO cho Comment
 export class CreateCommentBodyDto {
   @IsNotEmpty()
@@ -41,6 +35,11 @@ export class CreateCommentBodyDto {
   userId?: number;
 }
 
+export class DeleteCommentParamDto {
+  @Type(() => Number)
+  @IsNumber()
+  commentId: number;
+}
 export class UpdateCommentBodyDto {
   @IsNotEmpty()
   @IsString()
@@ -70,6 +69,12 @@ export class UpdateCommentReplyBodyDto {
   @IsNotEmpty()
   @IsString()
   content: string;
+}
+
+export class DeleteReplyParamDto {
+  @Type(() => Number)
+  @IsNumber()
+  replyId: number;
 }
 
 // DTO cho Comment Ban

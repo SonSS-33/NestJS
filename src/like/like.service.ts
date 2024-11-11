@@ -4,7 +4,7 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { PostLikeEntity } from './entities/like.post.entity';
 import { CommentLikeEntity } from './entities/like.comment.entity';
 import { PostEntity } from 'src/post/entities/post.entity';
@@ -40,6 +40,7 @@ export class LikeService {
       user: { id: userId },
       post: { id: postId },
       createdBy: userId,
+      createdAt: new Date(),
     });
     await this.postLikeRepository.save(newLike);
 
@@ -52,17 +53,21 @@ export class LikeService {
       where: {
         post: { id: postId },
         user: { id: userId },
+        deletedAt: IsNull(),
       },
     });
 
     if (!like) {
       throw new NotFoundException('Like not found for this post');
     }
-    await this.postLikeRepository.remove(like);
+
+    like.deletedAt = new Date();
+    await this.postLikeRepository.save(like);
 
     const post = await this.postRepository.findOne({ where: { id: postId } });
     if (post) {
       post.likeCount = Math.max((post.likeCount || 0) - 1, 0);
+
       return await this.postRepository.save(post);
     }
   }
@@ -86,6 +91,7 @@ export class LikeService {
       user: { id: userId },
       comment: { id: commentId },
       createdBy: userId,
+      createdAt: new Date(),
     });
     await this.commentLikeRepository.save(newLike);
 
@@ -102,13 +108,15 @@ export class LikeService {
       throw new NotFoundException('Like not found for this comment');
     }
 
-    await this.commentLikeRepository.remove(like);
+    like.deletedAt = new Date();
+    await this.commentLikeRepository.save(like);
 
     const comment = await this.commentRepository.findOne({
       where: { id: commentId },
     });
     if (comment) {
       comment.likeCount = Math.max((comment.likeCount || 0) - 1, 0);
+
       return await this.commentRepository.save(comment);
     }
   }
