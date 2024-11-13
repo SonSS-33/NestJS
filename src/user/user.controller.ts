@@ -13,8 +13,7 @@ import { UserService } from './user.service';
 import {
   RegisterUserBodyDto,
   DeleteUserParamsDto,
-  UpdateByAdminBodyDto,
-  //UpdateByAdminParamsDto,
+  UpdateByAdminParamsDto,
   UpdateUserBodyDto,
   GetUserDetailParamsDto,
 } from './dto/user.dto';
@@ -42,7 +41,7 @@ export class UserController {
       body.bio,
     );
   }
-
+  @Roles(RoleType.ADMIN)
   @Get(':userId/detail')
   async getUser(@Param() params: GetUserDetailParamsDto) {
     const user = await this.userService.getUser(params.userId, true);
@@ -53,7 +52,7 @@ export class UserController {
   @Put(':userId/update')
   async updateByAdmin(
     @Param() params: GetUserDetailParamsDto,
-    @Body() body: UpdateByAdminBodyDto,
+    @Body() body: UpdateByAdminParamsDto,
   ) {
     const user = await this.userService.getUser(params.userId, true);
     const dateOfBirth = new Date(body.dateOfBirth);

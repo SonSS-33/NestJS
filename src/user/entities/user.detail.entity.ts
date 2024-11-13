@@ -24,7 +24,7 @@ export class UserDetailEntity {
   last_name: string;
 
   @Column()
-  date_of_birth: Date | null;
+  date_of_birth: Date;
 
   @Column()
   address: string;

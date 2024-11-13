@@ -46,19 +46,17 @@ export class GetUserDetailParamsDto {
   userId: number;
 }
 
-export class UpdateByAdminParamsDto {
-  @Type(() => Number)
-  @IsNumber()
-  userId: number;
-}
-
 export class DeleteUserParamsDto {
   @Type(() => Number)
   @IsNumber()
   userId: number;
+
+  @IsOptional()
+  @IsNumber()
+  deletedBy?: number;
 }
 
-export class UpdateByAdminBodyDto {
+export class UpdateByAdminParamsDto {
   @IsOptional()
   @IsEmail()
   email: string;
@@ -67,7 +65,7 @@ export class UpdateByAdminBodyDto {
   @MinLength(6)
   password: string;
 
-  @IsEnum(PublicRoleType)
+  @IsEnum(RoleType)
   role: RoleType;
 
   @IsString()
