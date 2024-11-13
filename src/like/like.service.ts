@@ -30,7 +30,11 @@ export class LikeService {
     }
 
     const existingLike = await this.postLikeRepository.findOne({
-      where: { post: { id: postId }, user: { id: userId } },
+      where: {
+        post: { id: postId },
+        user: { id: userId },
+        deletedAt: IsNull(),
+      },
     });
     if (existingLike) {
       throw new ConflictException('User has already liked this post');
@@ -81,7 +85,11 @@ export class LikeService {
     }
 
     const existingLike = await this.commentLikeRepository.findOne({
-      where: { comment: { id: commentId }, user: { id: userId } },
+      where: {
+        comment: { id: commentId },
+        user: { id: userId },
+        deletedAt: IsNull(),
+      },
     });
     if (existingLike) {
       throw new ConflictException('User has already liked this comment');
@@ -101,7 +109,11 @@ export class LikeService {
 
   async unlikeComment(commentId: number, userId: number) {
     const like = await this.commentLikeRepository.findOne({
-      where: { comment: { id: commentId }, user: { id: userId } },
+      where: {
+        comment: { id: commentId },
+        user: { id: userId },
+        deletedAt: IsNull(),
+      },
     });
 
     if (!like) {

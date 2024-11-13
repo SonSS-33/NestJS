@@ -16,11 +16,11 @@ export class PostLikeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => PostEntity, (post) => post.id)
+  @ManyToOne(() => PostEntity, (post) => post.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'post_id' })
   post: PostEntity;
 

@@ -16,11 +16,13 @@ export class CommentLikeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.id)
+  @ManyToOne(() => UserEntity, (user) => user.id, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 
-  @ManyToOne(() => CommentEntity, (comment) => comment.id)
+  @ManyToOne(() => CommentEntity, (comment) => comment.id, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'comment_id' })
   comment: CommentEntity;
 
