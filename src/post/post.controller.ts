@@ -39,7 +39,7 @@ export class PostController {
     return await this.postService.getPost(params.postId);
   }
 
-  @Put('update')
+  @Put(':postId/update')
   async updatePost(
     @Param() params: GetPostParamsDto,
     @Body() body: UpdatePostBodyDto,
@@ -55,6 +55,7 @@ export class PostController {
       body.content,
     );
   }
+
   @Delete(':postId/delete')
   async deletePost(@Param() params: DeletePostParamsDto, @Req() req: any) {
     const userId = req.user.userId;

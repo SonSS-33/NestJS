@@ -7,7 +7,6 @@ import { PostEntity } from './entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { PostImageEntity } from './entities/post.img.entity';
-import { RoleType } from 'src/user/enums/role.type';
 
 @Injectable()
 export class PostService {
@@ -61,10 +60,10 @@ export class PostService {
   }
 
   async updatePost(
-    postId: number,
-    userId: number,
-    title: string,
-    content: string,
+    postId: number | undefined,
+    userId: number | undefined,
+    title: string | undefined,
+    content: string | undefined,
   ) {
     const post = await this.getPost(postId);
 
@@ -72,7 +71,7 @@ export class PostService {
       throw new NotFoundException('Post not found');
     }
 
-    if (post.user.id !== userId && post.user.role !== RoleType.ADMIN) {
+    if (post.user.id !== userId) {
       throw new ForbiddenException(
         'You can only update your own post or admin can update any post',
       );
@@ -95,7 +94,7 @@ export class PostService {
   async deletePost(postId: number, userId: number) {
     const post = await this.getPost(postId);
 
-    if (post.user.id !== userId && post.user.role !== RoleType.ADMIN) {
+    if (post.user.id !== userId) {
       throw new ForbiddenException(
         'You can only delete your own post or admin can delete any post',
       );
