@@ -22,15 +22,14 @@ export class PostService {
     title: string,
     content: string,
     images: string[],
+    reqAccountId: number,
   ) {
-    const newPost = this.postRepository.create({
-      user: { id: userId },
-      title,
-      content,
-      createdAt: new Date(),
-      createdBy: userId,
-    });
-
+    const newPost = new PostEntity();
+    newPost.userId = userId;
+    newPost.title = title;
+    newPost.content = content;
+    newPost.createdAt = new Date();
+    newPost.createdBy = reqAccountId;
     const savedPost = await this.postRepository.save(newPost);
 
     if (images && images.length > 0) {
@@ -61,9 +60,9 @@ export class PostService {
 
   async updatePost(
     postId: number | undefined,
-    userId: number | undefined,
     title: string | undefined,
     content: string | undefined,
+    userId: number | undefined,
   ) {
     const post = await this.getPost(postId);
 

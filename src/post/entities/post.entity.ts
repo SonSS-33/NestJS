@@ -16,34 +16,37 @@ import { PostLikeEntity } from 'src/like/entities/like.post.entity';
 @Entity('post')
 export class PostEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
+
+  @Column({ name: 'user_id' })
+  userId!: number;
 
   @Column()
-  title: string;
+  title!: string;
 
   @Column()
-  content: string;
+  content!: string;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt?: Date;
 
   @Column({ name: 'created_by', nullable: true })
-  createdBy: number;
+  createdBy?: number;
 
-  @UpdateDateColumn({ name: 'updated_at', nullable: true })
-  updatedAt: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt?: Date;
 
-  @Column({ name: 'updated_by', nullable: true })
-  updatedBy: number;
+  @Column({ name: 'updated_by' })
+  updatedBy?: number;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
-  deletedAt: Date;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 
-  @Column({ name: 'deleted_by', nullable: true })
-  deletedBy: number;
+  @Column({ name: 'deleted_by' })
+  deletedBy?: number;
 
-  @Column({ name: 'like_count', default: 0 })
-  likeCount: number;
+  @Column({ name: 'like_count' })
+  likeCount?: number;
 
   @OneToMany(() => PostImageEntity, (image) => image.post)
   images: PostImageEntity[];

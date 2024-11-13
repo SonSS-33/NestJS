@@ -7,7 +7,7 @@ import {
   DeletePostLikeDto,
 } from './dtos/like.dto';
 
-@Controller('api/v1/like')
+@Controller('api/v1')
 export class LikeController {
   constructor(private readonly likeService: LikeService) {}
 
@@ -17,7 +17,7 @@ export class LikeController {
     return this.likeService.likePost(body.postId, userId);
   }
 
-  @Delete('posts')
+  @Delete('post/:postId/unlike')
   async unlikePost(@Body() body: DeletePostLikeDto, @Req() req: any) {
     const userId = req.user.userId;
     return this.likeService.unlikePost(body.postId, userId);

@@ -30,6 +30,7 @@ export class PostController {
       body.title,
       body.content,
       body.imageUrl,
+      userId,
     );
   }
 
@@ -50,9 +51,9 @@ export class PostController {
 
     return await this.postService.updatePost(
       postId,
-      userId,
       body.title,
       body.content,
+      userId,
     );
   }
 
