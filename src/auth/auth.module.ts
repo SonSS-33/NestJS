@@ -17,7 +17,13 @@ import { JwtStrategy } from './passport/jwt.strategy';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        return configService.get('auth.jwt');
+        const jwtConfig = configService.get('auth.jwt');
+        return {
+          secret: jwtConfig.secret,
+          signOptions: {
+            expiresIn: jwtConfig.expiresIn,
+          },
+        };
       },
     }),
     forwardRef(() => UserModule),

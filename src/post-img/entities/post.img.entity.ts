@@ -1,3 +1,4 @@
+import { PostEntity } from 'src/post/entities/post.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -5,30 +6,24 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
-@Entity('user_detail')
-export class UserDetailEntity {
+@Entity('post_image')
+export class PostImageEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: 'user_id' })
-  userId!: number;
+  @Column({ name: 'post_id' })
+  postId!: number;
 
   @Column()
-  first_name!: string;
+  imageUrl!: string;
 
-  @Column()
-  last_name!: string;
-
-  @Column()
-  date_of_birth!: Date;
-
-  @Column()
-  address!: string;
-
-  @Column()
-  bio!: string;
+  @ManyToOne(() => PostEntity, (post) => post.postImages)
+  @JoinColumn({ name: 'post_id' })
+  post!: PostEntity;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;

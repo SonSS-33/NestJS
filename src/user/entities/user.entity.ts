@@ -13,17 +13,16 @@ import {
 import { RoleType } from '../enums/role.type';
 import { IsEmail, IsOptional, IsString, MinLength } from 'class-validator';
 import { UserDetailEntity } from './user.detail.entity';
-import { PostLikeEntity } from 'src/like/entities/like.post.entity';
-import { CommentEntity } from 'src/comment/entities/comment.entity';
+import { PostEntity } from 'src/post/entities/post.entity';
 
 @Entity('user')
 export class UserEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column()
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsOptional()
   @IsString()
@@ -32,38 +31,36 @@ export class UserEntity {
   password?: string;
 
   @Column({ name: 'is_active' })
-  isActive: boolean;
+  isActive!: boolean;
 
   @Column()
-  role: RoleType;
+  role!: RoleType;
+
+  @Column({ name: 'user_detail' })
+  userDetailId!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt?: Date;
 
-  @Column({ name: 'created_by', nullable: true })
-  createdBy: number;
+  @Column({ name: 'created_by' })
+  createdBy?: number;
 
-  @UpdateDateColumn({ name: 'updated_at', nullable: true })
-  updatedAt: Date;
+  @UpdateDateColumn({ name: 'updated_at' })
+  updatedAt?: Date;
 
-  @Column({ name: 'updated_by', nullable: true })
-  updatedBy: number;
+  @Column({ name: 'updated_by' })
+  updatedBy?: number;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
-  deletedAt: Date;
+  @DeleteDateColumn({ name: 'deleted_at' })
+  deletedAt?: Date;
 
-  @Column({ name: 'deleted_by', nullable: true })
-  deletedBy: number;
+  @Column({ name: 'deleted_by' })
+  deletedBy?: number;
 
-  @OneToOne(() => UserDetailEntity, (userDetail) => userDetail.user, {
-    cascade: true,
-  })
-  @JoinColumn()
-  userDetail: UserDetailEntity;
+  @OneToOne(() => UserDetailEntity)
+  @JoinColumn({ name: 'user_detail' })
+  userDetail?: UserDetailEntity;
 
-  @OneToMany(() => PostLikeEntity, (postLike) => postLike.user)
-  postLikes: PostLikeEntity[];
-
-  @OneToMany(() => CommentEntity, (commentLike) => commentLike.user)
-  commentLikes: CommentEntity[];
+  @OneToMany(() => PostEntity, (post) => post.user)
+  posts!: PostEntity[];
 }

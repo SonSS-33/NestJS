@@ -11,11 +11,11 @@ import {
 export class CreatePostBodyDto {
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title!: string;
 
   @IsString()
   @IsNotEmpty()
-  content: string;
+  content!: string;
 
   @IsArray()
   @IsOptional()
@@ -41,11 +41,17 @@ export class UpdatePostBodyDto {
 export class GetPostParamsDto {
   @Type(() => Number)
   @IsNumber()
-  postId: number;
+  postId!: number;
 }
 
 export class DeletePostParamsDto {
   @Type(() => Number)
   @IsNumber()
-  postId: number;
+  postId!: number;
+}
+
+export class DeletePostImgParamsDto {
+  @Type(() => Number)
+  @IsNumber()
+  imageUrlId!: number;
 }

@@ -20,6 +20,9 @@ export class AuthService {
 
   async validateUser(username: string, password: string): Promise<boolean> {
     const user = await this.userService.getUserByUsername(username, false);
+    if (!user.password) {
+      throw new Error('User password is undefined');
+    }
     const checkPassword = await compare(password, user.password);
     if (!checkPassword) {
       return false;

@@ -9,31 +9,29 @@ import {
 } from 'class-validator';
 import { RoleType } from '../enums/role.type';
 import { PublicRoleType } from '../enums/public-role.type';
-import { UserDetailEntity } from '../entities/user.detail.entity';
-import { UserEntity } from '../entities/user.entity';
 
 export class RegisterUserBodyDto {
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 
   @IsEnum(PublicRoleType)
-  role: RoleType;
+  role!: RoleType;
 
   @IsString()
-  firstName: string;
+  firstName!: string;
 
   @IsString()
-  lastName: string;
+  lastName!: string;
 
   @IsString()
-  dateOfBirth: string;
+  dateOfBirth!: string;
 
   @IsString()
-  address: string;
+  address!: string;
 
   @IsString()
   @IsOptional()
@@ -43,13 +41,13 @@ export class RegisterUserBodyDto {
 export class GetUserDetailParamsDto {
   @Type(() => Number)
   @IsNumber()
-  userId: number;
+  userId!: number;
 }
 
 export class DeleteUserParamsDto {
   @Type(() => Number)
   @IsNumber()
-  userId: number;
+  userId!: number;
 
   @IsOptional()
   @IsNumber()
@@ -59,26 +57,26 @@ export class DeleteUserParamsDto {
 export class UpdateByAdminParamsDto {
   @IsOptional()
   @IsEmail()
-  email: string;
+  email!: string;
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 
   @IsEnum(RoleType)
-  role: RoleType;
+  role!: RoleType;
 
   @IsString()
-  firstName: string;
+  firstName!: string;
 
   @IsString()
-  lastName: string;
+  lastName!: string;
 
   @IsString()
-  dateOfBirth: string;
+  dateOfBirth!: string;
 
   @IsString()
-  address: string;
+  address!: string;
 
   @IsString()
   @IsOptional()
@@ -92,40 +90,24 @@ export class UpdateUserBodyDto {
 
   @IsString()
   @MinLength(6)
-  password: string;
+  password!: string;
 
   @IsEnum(PublicRoleType)
-  role: RoleType;
+  role!: RoleType;
 
   @IsString()
-  firstName: string;
+  firstName!: string;
 
   @IsString()
-  lastName: string;
+  lastName!: string;
 
   @IsString()
-  dateOfBirth: string;
+  dateOfBirth!: string;
 
   @IsString()
-  address: string;
+  address!: string;
 
   @IsString()
   @IsOptional()
   bio?: string;
-}
-
-export class UserDetailResponseDto {
-  id: number;
-  email: string;
-  isActive: boolean;
-  role: RoleType;
-  userDetail: UserDetailEntity;
-
-  constructor(user: UserEntity) {
-    this.id = user.id;
-    this.email = user.email;
-    this.isActive = user.isActive;
-    this.role = user.role;
-    this.userDetail = user.userDetail;
-  }
 }

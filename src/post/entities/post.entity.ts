@@ -1,17 +1,16 @@
+import { PostImageEntity } from 'src/post-img/entities/post.img.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToOne,
+  JoinColumn,
   OneToMany,
 } from 'typeorm';
-import { UserEntity } from 'src/user/entities/user.entity';
-import { PostImageEntity } from './post.img.entity';
-import { PostLikeEntity } from 'src/like/entities/like.post.entity';
 
 @Entity('post')
 export class PostEntity {
@@ -21,16 +20,23 @@ export class PostEntity {
   @Column({ name: 'user_id' })
   userId!: number;
 
+  @ManyToOne(() => UserEntity, (user) => user.posts)
+  @JoinColumn({ name: 'user_id' })
+  user!: UserEntity;
+
   @Column()
   title!: string;
 
   @Column()
   content!: string;
 
+  @OneToMany(() => PostImageEntity, (postImage) => postImage.post)
+  postImages!: PostImageEntity[];
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;
 
-  @Column({ name: 'created_by', nullable: true })
+  @Column({ name: 'created_by' })
   createdBy?: number;
 
   @UpdateDateColumn({ name: 'updated_at' })
@@ -47,14 +53,4 @@ export class PostEntity {
 
   @Column({ name: 'like_count' })
   likeCount?: number;
-
-  @OneToMany(() => PostImageEntity, (image) => image.post)
-  images: PostImageEntity[];
-
-  @ManyToOne(() => UserEntity)
-  @JoinColumn({ name: 'user_id' })
-  user: UserEntity;
-
-  @OneToMany(() => PostLikeEntity, (postLike) => postLike.post)
-  likes: PostLikeEntity[];
 }

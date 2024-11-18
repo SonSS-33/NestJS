@@ -9,7 +9,6 @@ import {
   Delete,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-
 import {
   CreatePostBodyDto,
   DeletePostParamsDto,
@@ -29,7 +28,7 @@ export class PostController {
       userId,
       body.title,
       body.content,
-      body.imageUrl,
+      body.imageUrl || [],
       userId,
     );
   }
@@ -53,6 +52,7 @@ export class PostController {
       postId,
       body.title,
       body.content,
+
       userId,
     );
   }

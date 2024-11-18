@@ -21,7 +21,7 @@ import { Roles } from 'src/guards/roles.decorator';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { RoleType } from './enums/role.type';
 import { PaginationModel } from 'src/utils/pagination.model';
-import { UserDetailResponseDto } from './dto/user.dto';
+
 @Controller('api/v1/user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -41,11 +41,12 @@ export class UserController {
       body.bio,
     );
   }
+
   @Roles(RoleType.ADMIN)
   @Get(':userId/detail')
   async getUser(@Param() params: GetUserDetailParamsDto) {
     const user = await this.userService.getUser(params.userId, true);
-    return new UserDetailResponseDto(user);
+    return user;
   }
 
   @Roles(RoleType.ADMIN)

@@ -28,25 +28,26 @@ export class UserService {
   ): Promise<UserEntity> {
     const hashedPassword = await hash(password, 10);
 
-    const user = this.userRepository.create({
-      email,
-      password: hashedPassword,
-      isActive: true,
-      role,
-    });
+    const newUser = new UserEntity();
+    newUser.email = email;
+    newUser.password = hashedPassword;
+    newUser.isActive = true;
+    newUser.role = role;
 
-    const savedUser = await this.userRepository.save(user);
+    const savedUser = await this.userRepository.save(newUser);
 
-    const userDetail = this.userDetailRepository.create({
-      first_name: firstName,
-      last_name: lastName,
-      date_of_birth: dateOfBirth,
-      address,
-      bio,
-      user: savedUser,
-    });
+    const userDetail = new UserDetailEntity();
+    userDetail.first_name = firstName;
+    userDetail.last_name = lastName;
+    userDetail.date_of_birth = dateOfBirth;
+    userDetail.address = address;
+    userDetail.bio = bio || '';
+    userDetail.userId = savedUser.id;
 
-    await this.userDetailRepository.save(userDetail);
+    const savedUserDetail = await this.userDetailRepository.save(userDetail);
+    savedUser.userDetailId = savedUserDetail.id;
+
+    await this.userRepository.save(savedUser);
 
     delete savedUser.password;
     return savedUser;
@@ -121,9 +122,9 @@ export class UserService {
     email: string | undefined,
     password: string | undefined,
     role: RoleType | undefined,
-    first_name: string | undefined,
-    last_name: string | undefined,
-    date_of_birth: Date | undefined,
+    firstName: string | undefined,
+    lastName: string | undefined,
+    dateOfBirth: Date | undefined,
     address: string | undefined,
     bio?: string | undefined,
   ) {
@@ -143,9 +144,9 @@ export class UserService {
       updateData,
     );
     const userDetailUpdateData = {
-      first_name,
-      last_name,
-      date_of_birth,
+      firstName,
+      lastName,
+      dateOfBirth,
       address,
       bio,
     };

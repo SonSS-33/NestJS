@@ -1,27 +1,28 @@
 import {
+  BadRequestException,
   ForbiddenException,
+  HttpException,
+  HttpStatus,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { PostEntity } from './entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { PostImageEntity } from './entities/post.img.entity';
+import { PostImageService } from 'src/post-img/post-img.service';
 
 @Injectable()
 export class PostService {
   constructor(
     @InjectRepository(PostEntity)
     private readonly postRepository: Repository<PostEntity>,
-    @InjectRepository(PostImageEntity)
-    private readonly postImageRepository: Repository<PostImageEntity>,
+    private readonly PostImageService: PostImageService,
   ) {}
 
   async createPost(
     userId: number,
     title: string,
     content: string,
-    images: string[],
+    imageUrl: string[],
     reqAccountId: number,
   ) {
     const newPost = new PostEntity();
@@ -32,16 +33,12 @@ export class PostService {
     newPost.createdBy = reqAccountId;
     const savedPost = await this.postRepository.save(newPost);
 
-    if (images && images.length > 0) {
-      const postImages = images.map((imageUrl) => {
-        return this.postImageRepository.create({
-          post: savedPost,
-          imageUrl: imageUrl,
-          createdBy: userId,
-        });
-      });
-
-      await this.postImageRepository.save(postImages);
+    if (imageUrl && imageUrl.length > 0) {
+      await this.PostImageService.savePostImages(
+        savedPost.id,
+        imageUrl,
+        userId,
+      );
     }
 
     const postWithImages = await this.getPost(savedPost.id);
@@ -49,28 +46,35 @@ export class PostService {
   }
 
   async getPost(postId: number) {
-    return await this.postRepository.findOne({
+    const post = await this.postRepository.findOne({
       where: {
         id: postId,
         deletedAt: IsNull(),
       },
-      relations: ['user', 'images'],
+      relations: ['postImages'],
     });
+
+    if (!post) {
+      throw new HttpException('POST_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    console.log('Bài viết với ảnh:', post);
+    return post;
   }
 
   async updatePost(
     postId: number | undefined,
     title: string | undefined,
     content: string | undefined,
+
     userId: number | undefined,
   ) {
+    if (!postId) {
+      throw new BadRequestException('Both postId  are required.');
+    }
     const post = await this.getPost(postId);
 
-    if (!post) {
-      throw new NotFoundException('Post not found');
-    }
-
-    if (post.user.id !== userId) {
+    if (post.userId !== userId) {
       throw new ForbiddenException(
         'You can only update your own post or admin can update any post',
       );
@@ -87,13 +91,14 @@ export class PostService {
       { id: post.id, deletedAt: IsNull() },
       updateData,
     );
+
     return await this.getPost(post.id);
   }
 
   async deletePost(postId: number, userId: number) {
     const post = await this.getPost(postId);
 
-    if (post.user.id !== userId) {
+    if (post.userId !== userId) {
       throw new ForbiddenException(
         'You can only delete your own post or admin can delete any post',
       );
