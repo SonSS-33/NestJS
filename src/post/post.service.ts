@@ -85,7 +85,9 @@ export class PostService {
 
   async deletePost(postId: number, userId: number) {
     const post = await this.getPost(postId);
-
+    if (post.createdBy !== userId) {
+      throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
+    }
     await this.postRepository.update(
       {
         id: post.id,

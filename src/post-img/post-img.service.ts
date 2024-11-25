@@ -56,6 +56,9 @@ export class PostImageService {
       throw new HttpException('IMG_NOT_FOUND', HttpStatus.NOT_FOUND);
     }
 
+    if (image.createdBy !== userId) {
+      throw new HttpException('FORBIDDEN', HttpStatus.FORBIDDEN);
+    }
     image.deletedAt = new Date();
     image.deletedBy = userId;
 
