@@ -16,6 +16,8 @@ import {
   UpdatePostBodyDto,
 } from './dtos/post.dto';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from 'src/guards/roles.decorator';
+import { RoleType } from 'src/user/enums/role.type';
 
 @Controller('api/v1/post')
 export class PostController {
@@ -39,20 +41,35 @@ export class PostController {
     return await this.postService.getPost(params.postId);
   }
 
+  @Roles(RoleType.ADMIN)
   @Put(':postId/update')
-  async updatePost(
+  async updatePostByAdmin(
     @Param() params: GetPostParamsDto,
     @Body() body: UpdatePostBodyDto,
     @Req() req: any,
   ) {
-    const postId = params.postId;
+    const post = await this.postService.getPost(params.postId);
     const userId = req.user.userId;
 
     return await this.postService.updatePost(
-      postId,
+      post,
       body.title,
       body.content,
+      userId,
+    );
+  }
 
+  @Put('update')
+  async updatePost(@Body() body: UpdatePostBodyDto, @Req() req: any) {
+    const postId = body.postId;
+    const post = await this.postService.getPost(postId);
+
+    const userId = req.user.userId;
+
+    return await this.postService.updatePost(
+      post,
+      body.title,
+      body.content,
       userId,
     );
   }

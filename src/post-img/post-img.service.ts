@@ -18,7 +18,6 @@ export class PostImageService {
       newPostImage.createdBy = userId;
       return newPostImage;
     });
-
     return this.postImageRepository.save(postImages);
   }
 
@@ -37,7 +36,30 @@ export class PostImageService {
     return images;
   }
 
-  async addImagesToPost(postId: number, imageUrls: string[], userId: number) {
-    return await this.savePostImages(postId, imageUrls, userId);
+  async addImagesToPost(
+    postId: number,
+    imageUrls: string[],
+    reqAccount: number,
+  ) {
+    return await this.savePostImages(postId, imageUrls, reqAccount);
+  }
+
+  async deleteImage(imageUrlId: number, userId: number) {
+    const image = await this.postImageRepository.findOne({
+      where: {
+        id: imageUrlId,
+        deletedAt: IsNull(),
+      },
+    });
+
+    if (!image) {
+      throw new HttpException('IMG_NOT_FOUND', HttpStatus.NOT_FOUND);
+    }
+
+    image.deletedAt = new Date();
+    image.deletedBy = userId;
+
+    await this.postImageRepository.save(image);
+    return true;
   }
 }

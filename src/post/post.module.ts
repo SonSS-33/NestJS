@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common';
-import { PostController } from './post.controller';
-import { PostService } from './post.service';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './entities/post.entity';
-//import { PostImageEntity } from '../post-img/entities/post.img.entity';
+import { PostController } from './post.controller';
 import { PostImageModule } from 'src/post-img/post-img.module';
+import { PostService } from './post.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([PostEntity]), PostImageModule],
+  imports: [
+    TypeOrmModule.forFeature([PostEntity]),
+    forwardRef(() => PostImageModule),
+  ],
   controllers: [PostController],
   providers: [PostService],
 })

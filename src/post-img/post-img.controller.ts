@@ -1,6 +1,18 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { PostImageService } from './post-img.service';
-import { GetPostParamsDto } from 'src/post/dtos/post.dto';
+import {
+  DeletePostImgParamsDto,
+  AddImagesBodyDto,
+  GetPostParamsDto,
+} from 'src/post/dtos/post.dto';
 
 @Controller('api/v1/post-image')
 export class PostImageController {
@@ -13,15 +25,22 @@ export class PostImageController {
 
   @Post(':postId/add')
   async addImagesToPost(
-    @Param() params: GetPostParamsDto,
-    @Body('imageUrls') imageUrls: string[],
+    @Param('postId') postId: number,
+    @Body() body: AddImagesBodyDto,
     @Req() req: any,
   ) {
-    const userId = req.user.userId;
+    const reqAccount = req.user.userId;
+
     return await this.postImageService.addImagesToPost(
-      params.postId,
-      imageUrls,
-      userId,
+      postId,
+      body.imageUrls,
+      reqAccount,
     );
+  }
+
+  @Delete(':postId/image/:imageUrlId')
+  async deleteImage(@Param() params: DeletePostImgParamsDto, @Req() req: any) {
+    const userId = req.user.userId;
+    return await this.postImageService.deleteImage(params.imageUrlId, userId);
   }
 }
