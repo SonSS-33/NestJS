@@ -1,37 +1,29 @@
-import { PostImageEntity } from 'src/post/entities/post.img.entity';
-import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
+  ManyToOne,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
 } from 'typeorm';
+import { CommentEntity } from './comment.entity';
+import { UserEntity } from 'src/user/entities/user.entity';
 
-@Entity('post')
-export class PostEntity {
+@Entity('comment_reply')
+export class CommentReplyEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Column({ name: 'comment_id' })
+  commentId!: number;
 
   @Column({ name: 'user_id' })
   userId!: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.posts)
-  @JoinColumn({ name: 'user_id' })
-  user!: UserEntity;
-
-  @Column()
-  title!: string;
-
-  @Column()
+  @Column('text')
   content!: string;
-
-  @OneToMany(() => PostImageEntity, (postImage) => postImage.post)
-  postImages!: PostImageEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;
@@ -51,6 +43,11 @@ export class PostEntity {
   @Column({ name: 'deleted_by' })
   deletedBy?: number;
 
-  @Column({ name: 'like_count' })
-  likeCount?: number;
+  @ManyToOne(() => CommentEntity, (comment) => comment.id)
+  @JoinColumn({ name: 'comment_id' })
+  comment!: CommentEntity;
+
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  @JoinColumn({ name: 'user_id' })
+  user!: UserEntity;
 }

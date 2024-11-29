@@ -7,7 +7,7 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { PostImageService } from './post-img.service';
+import { PostImageService } from '../service/post-img.service';
 import {
   DeletePostImgParamsDto,
   AddImagesBodyDto,

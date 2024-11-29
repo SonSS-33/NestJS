@@ -4,10 +4,10 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { PostEntity } from './entities/post.entity';
+import { PostEntity } from '../entities/post.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { PostImageService } from 'src/post-img/post-img.service';
+import { PostImageService } from './post-img.service';
 
 @Injectable()
 export class PostService {

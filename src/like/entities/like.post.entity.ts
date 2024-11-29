@@ -1,5 +1,3 @@
-import { PostImageEntity } from 'src/post/entities/post.img.entity';
-import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,31 +5,18 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
 } from 'typeorm';
 
-@Entity('post')
-export class PostEntity {
+@Entity('post_like')
+export class PostLikeEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ name: 'post_id' })
+  postId!: number;
+
   @Column({ name: 'user_id' })
   userId!: number;
-
-  @ManyToOne(() => UserEntity, (user) => user.posts)
-  @JoinColumn({ name: 'user_id' })
-  user!: UserEntity;
-
-  @Column()
-  title!: string;
-
-  @Column()
-  content!: string;
-
-  @OneToMany(() => PostImageEntity, (postImage) => postImage.post)
-  postImages!: PostImageEntity[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;
@@ -50,7 +35,4 @@ export class PostEntity {
 
   @Column({ name: 'deleted_by' })
   deletedBy?: number;
-
-  @Column({ name: 'like_count' })
-  likeCount?: number;
 }

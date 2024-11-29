@@ -1,5 +1,3 @@
-import { PostImageEntity } from 'src/post/entities/post.img.entity';
-import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,31 +5,24 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
 } from 'typeorm';
 
-@Entity('post')
-export class PostEntity {
+@Entity('comment')
+export class CommentEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+
+  @Column({ name: 'post_id' })
+  postId!: number;
 
   @Column({ name: 'user_id' })
   userId!: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.posts)
-  @JoinColumn({ name: 'user_id' })
-  user!: UserEntity;
-
-  @Column()
-  title!: string;
-
-  @Column()
+  @Column('text')
   content!: string;
 
-  @OneToMany(() => PostImageEntity, (postImage) => postImage.post)
-  postImages!: PostImageEntity[];
+  @Column({ name: 'image_url' })
+  imageUrl!: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;

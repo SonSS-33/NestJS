@@ -8,16 +8,17 @@ import {
   Req,
   Delete,
 } from '@nestjs/common';
-import { PostService } from './post.service';
+import { PostService } from '../service/post.service';
+
+import { Public } from 'src/auth/decorators/public.decorator';
+import { Roles } from 'src/guards/roles.decorator';
+import { RoleType } from 'src/user/enums/role.type';
 import {
   CreatePostBodyDto,
   DeletePostParamsDto,
   GetPostParamsDto,
   UpdatePostBodyDto,
-} from './dtos/post.dto';
-import { Public } from 'src/auth/decorators/public.decorator';
-import { Roles } from 'src/guards/roles.decorator';
-import { RoleType } from 'src/user/enums/role.type';
+} from '../dtos/post.dto';
 
 @Controller('api/v1/post')
 export class PostController {

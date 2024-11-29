@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
-import { PostImageEntity } from './entities/post.img.entity';
+import { PostImageEntity } from '../entities/post.img.entity';
 
 @Injectable()
 export class PostImageService {

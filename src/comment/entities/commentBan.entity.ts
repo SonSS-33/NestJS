@@ -1,37 +1,32 @@
-import { PostImageEntity } from 'src/post/entities/post.img.entity';
-import { UserEntity } from 'src/user/entities/user.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
+  ManyToOne,
+  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
 } from 'typeorm';
+import { UserEntity } from 'src/user/entities/user.entity';
 
-@Entity('post')
-export class PostEntity {
+@Entity('comment_ban')
+export class CommentBanEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
   @Column({ name: 'user_id' })
   userId!: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.posts)
+  @ManyToOne(() => UserEntity, (user) => user.id)
   @JoinColumn({ name: 'user_id' })
   user!: UserEntity;
 
-  @Column()
-  title!: string;
+  @Column({ name: 'banned_until' })
+  bannedUntil!: Date;
 
   @Column()
-  content!: string;
-
-  @OneToMany(() => PostImageEntity, (postImage) => postImage.post)
-  postImages!: PostImageEntity[];
+  reason!: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;
@@ -50,7 +45,4 @@ export class PostEntity {
 
   @Column({ name: 'deleted_by' })
   deletedBy?: number;
-
-  @Column({ name: 'like_count' })
-  likeCount?: number;
 }

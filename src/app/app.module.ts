@@ -9,11 +9,10 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import database from 'src/config/database';
 import { RolesGuard } from 'src/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/middlewares/jwt.auth.guard';
-import { PostModule } from 'src/post/post.module';
-import { PostImageModule } from 'src/post-img/post-img.module';
-// import { PostModule } from 'src/post/post.module';
-// import { CommentModule } from 'src/comment/comment.module';
-// import { LikeModule } from 'src/like/like.module';
+import { PostModule } from 'src/post/module/post.module';
+import { PostImageModule } from 'src/post/module/post-img.module';
+import { CommentModule } from 'src/comment/comment.module';
+import { LikeModule } from 'src/like/like.module';
 // import { FollowModule } from 'src/follow/follow.module';
 // import { ReportModule } from 'src/report/report.module';
 
@@ -33,8 +32,8 @@ import { PostImageModule } from 'src/post-img/post-img.module';
     AuthModule,
     PostModule,
     PostImageModule,
-    // CommentModule,
-    // LikeModule,
+    CommentModule,
+    LikeModule,
     // FollowModule,
     // ReportModule,
   ],
