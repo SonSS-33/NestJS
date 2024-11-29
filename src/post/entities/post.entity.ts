@@ -20,10 +20,6 @@ export class PostEntity {
   @Column({ name: 'user_id' })
   userId!: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.posts)
-  @JoinColumn({ name: 'user_id' })
-  user!: UserEntity;
-
   @Column()
   title!: string;
 
@@ -53,4 +49,8 @@ export class PostEntity {
 
   @Column({ name: 'like_count' })
   likeCount?: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.posts)
+  @JoinColumn({ name: 'user_id' })
+  user!: UserEntity;
 }

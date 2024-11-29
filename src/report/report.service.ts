@@ -16,27 +16,26 @@ export class ReportService {
   ) {}
 
   async reportPost(postId: number, userId: number, reason: string) {
-    const report = this.postReportRepository.create({
-      post: { id: postId },
-      user: { id: userId },
-      reason,
-      status: ReportStatus.PENDING,
-      createdAt: new Date(),
-      createdBy: userId,
-    });
-    return await this.postReportRepository.save(report);
+    const newReportPost = new PostReportEntity();
+    newReportPost.postId = postId;
+    newReportPost.userId = userId;
+    newReportPost.reason = reason;
+    newReportPost.status = ReportStatus.PENDING;
+    newReportPost.createdAt = new Date();
+    newReportPost.createdBy = userId;
+
+    return await this.postReportRepository.save(newReportPost);
   }
 
   async reportComment(commentId: number, userId: number, reason: string) {
-    const report = this.commentReportRepository.create({
-      comment: { id: commentId },
-      user: { id: userId },
-      reason,
-      status: ReportStatus.PENDING,
-      createdAt: new Date(),
-      createdBy: userId,
-    });
-    return await this.commentReportRepository.save(report);
+    const newReportComment = new CommentReportEntity();
+    newReportComment.commentId = commentId;
+    newReportComment.userId = userId;
+    newReportComment.reason = reason;
+    newReportComment.status = ReportStatus.PENDING;
+    newReportComment.createdAt = new Date();
+    newReportComment.createdBy = userId;
+    return await this.commentReportRepository.save(newReportComment);
   }
 
   async getReports() {

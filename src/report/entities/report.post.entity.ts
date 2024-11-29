@@ -1,15 +1,11 @@
-// post-report.entity.ts
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { UserEntity } from 'src/user/entities/user.entity';
-import { PostEntity } from 'src/post/entities/post.entity';
+
 import { ReportStatus } from '../enums/report-status.enum';
 
 @Entity('post_report')
@@ -17,7 +13,13 @@ export class PostReportEntity {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column('text')
+  @Column({ name: 'post_id' })
+  postId!: number;
+
+  @Column({ name: 'user_id' })
+  userId!: number;
+
+  @Column({ name: 'reason' })
   reason!: string;
 
   @Column({
@@ -42,12 +44,4 @@ export class PostReportEntity {
 
   @Column({ name: 'deleted_by' })
   deletedBy?: number;
-
-  @ManyToOne(() => UserEntity, { eager: true })
-  @JoinColumn({ name: 'user_id' })
-  user!: UserEntity;
-
-  @ManyToOne(() => PostEntity, { eager: true })
-  @JoinColumn({ name: 'post_id' })
-  post!: PostEntity;
 }

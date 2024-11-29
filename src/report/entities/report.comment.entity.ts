@@ -16,8 +16,13 @@ import { ReportStatus } from '../enums/report-status.enum';
 export class CommentReportEntity {
   @PrimaryGeneratedColumn()
   id!: number;
+  @Column({ name: 'comment_id' })
+  commentId!: number;
 
-  @Column('text')
+  @Column({ name: 'user_id' })
+  userId!: number;
+
+  @Column({ name: 'reason' })
   reason!: string;
 
   @Column({

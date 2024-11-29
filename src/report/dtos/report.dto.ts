@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsEnum,
-  IsOptional,
-  IsNumber,
-} from 'class-validator';
+import { IsNotEmpty, IsString, IsEnum, IsNumber } from 'class-validator';
 import { ReportStatus } from '../enums/report-status.enum';
 import { Type } from 'class-transformer';
 
@@ -13,7 +7,6 @@ export class CreatePostReportDto {
   @IsString()
   reason!: string;
 
-  @IsOptional()
   @IsEnum(ReportStatus)
   status!: ReportStatus;
 }
@@ -23,13 +16,11 @@ export class CreateCommentReportDto {
   @IsString()
   reason!: string;
 
-  @IsOptional()
   @IsEnum(ReportStatus)
   status!: ReportStatus;
 }
 
 export class UpdatePostReportDto {
-  @IsOptional()
   @IsEnum(ReportStatus)
   status!: ReportStatus;
 }
